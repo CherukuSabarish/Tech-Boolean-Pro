@@ -1,8 +1,7 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-<title>Tech Boolean Pro</title>
+<title>Hiring Boolean Pro</title>
 
 <style>
 body {
@@ -10,7 +9,7 @@ body {
   color: #e2e8f0;
   font-family: system-ui;
   padding: 40px;
-  max-width: 1100px;
+  max-width: 1200px;
   margin: auto;
 }
 
@@ -48,32 +47,35 @@ button:hover {
   background: #0ea5e9;
 }
 
-textarea { height: 150px; }
+textarea { height: 170px; }
 </style>
 </head>
 
 <body>
 
-<h1>Tech Boolean Pro</h1>
+<h1>Hiring Boolean Pro</h1>
 
 <div class="card">
-<label>Select Role</label>
+<label>Role Category</label>
+<select id="category">
+<option value="">-- Select Category --</option>
+<option value="tech">Technology</option>
+<option value="sales">Sales</option>
+</select>
+
+<label>Role</label>
 <select id="role">
 <option value="">-- Select Role --</option>
-<option value="sre">SRE</option>
-<option value="devops">DevOps</option>
-<option value="sse">SSE</option>
-<option value="sdet">SDET</option>
 </select>
 
 <label>Location</label>
-<input id="location" placeholder="Bangalore">
+<input id="location" placeholder="India / Bangalore / Hyderabad">
 
-<label>Years of Experience (Min)</label>
-<input id="minExp" placeholder="3">
+<label>Experience (Min)</label>
+<input id="minExp">
 
-<label>Years of Experience (Max)</label>
-<input id="maxExp" placeholder="6">
+<label>Experience (Max)</label>
+<input id="maxExp">
 </div>
 
 <div class="card">
@@ -85,17 +87,25 @@ textarea { height: 150px; }
 <option value="fintech">Fintech</option>
 </select>
 
+<label>Education Filter</label>
+<select id="education">
+<option value="">-- None --</option>
+<option value="tier1">Tier 1</option>
+<option value="tier2">Tier 2</option>
+<option value="tier3">Tier 3</option>
+</select>
+
 <label>Custom Companies (comma separated)</label>
 <input id="companies" placeholder="Microsoft, Amazon">
 
-<label>Exclude Keywords</label>
+<label>Exclude Keywords (comma separated)</label>
 <input id="exclude" placeholder="Intern, Contract">
 </div>
 
-<button onclick="generate()">Generate Boolean</button>
-<button onclick="openGoogle()">Open Google X-Ray</button>
+<button onclick="generate()">Generate</button>
 <button onclick="openLinkedIn()">Open LinkedIn</button>
-<button onclick="openGitHub()">Open GitHub X-Ray</button>
+<button onclick="openGoogle()">Google X-Ray</button>
+<button onclick="openGitHub()">GitHub X-Ray</button>
 
 <div class="card">
 <h3>Boolean Output</h3>
@@ -110,35 +120,83 @@ textarea { height: 150px; }
 
 <script>
 
-const roles = {
+const techRoles = {
   sre: {
-    titles: '"SRE" OR "Site Reliability Engineer" OR "Production Engineer"',
-    skills: '"Kubernetes" OR "AWS" OR "Terraform" OR "Prometheus" OR "Docker"'
+    label: "SRE",
+    titles: '"SRE" OR "Site Reliability Engineer"',
+    skills: '"Kubernetes" OR "AWS" OR "Terraform" OR "Docker"'
   },
   devops: {
+    label: "DevOps",
     titles: '"DevOps Engineer" OR "Platform Engineer"',
-    skills: '"AWS" OR "Azure" OR "CI/CD" OR "Terraform" OR "Jenkins"'
+    skills: '"CI/CD" OR "AWS" OR "Azure" OR "Terraform"'
   },
   sse: {
-    titles: '"Senior Software Engineer" OR "SSE" OR "Senior Developer"',
+    label: "Senior Software Engineer",
+    titles: '"Senior Software Engineer" OR "SSE"',
     skills: '"Java" OR "Python" OR "Go" OR "Microservices"'
   },
   sdet: {
+    label: "SDET",
     titles: '"SDET" OR "Automation Engineer"',
     skills: '"Selenium" OR "Cypress" OR "API Testing"'
   }
 };
 
-const clusters = {
-  faang: '"Google" OR "Amazon" OR "Microsoft" OR "Meta" OR "Apple"',
-  unicorn: '"Flipkart" OR "Swiggy" OR "Razorpay" OR "Meesho" OR "Zomato" OR "PhonePe"',
-  fintech: '"Razorpay" OR "PhonePe" OR "Paytm" OR "Stripe" OR "Wise"'
+const salesRoles = {
+  enterprise: {
+    label: "Enterprise Account Executive",
+    titles: '"Enterprise Account Executive" OR "Major Account Manager"',
+    skills: '"Enterprise Sales" OR "SaaS" OR "ARR" OR "Quota" OR "Revenue"'
+  },
+  security: {
+    label: "Cloud / Security Sales",
+    titles: '"Cloud Sales" OR "Cyber Security Sales"',
+    skills: '"Cyber Security" OR "Cloud" OR "SaaS"'
+  },
+  channel: {
+    label: "Channel Sales",
+    titles: '"Channel Sales Manager" OR "Partner Account Manager"',
+    skills: '"Channel Sales" OR "Partner Management"'
+  },
+  presales: {
+    label: "Pre-Sales / Solutions",
+    titles: '"Solutions Engineer" OR "Pre Sales Consultant"',
+    skills: '"Technical Pre Sales" OR "Solution Architect" OR "Demo"'
+  }
 };
 
-function formatInput(value) {
+const clusters = {
+  faang: '"Google" OR "Amazon" OR "Microsoft" OR "Meta" OR "Apple"',
+  unicorn: '"Flipkart" OR "Swiggy" OR "Razorpay" OR "Meesho" OR "Zomato"',
+  fintech: '"Razorpay" OR "PhonePe" OR "Paytm" OR "Stripe"'
+};
+
+const educationMap = {
+  tier1: '"IIT" OR "IIM" OR "BITS Pilani" OR "NIT" OR "IIIT"',
+  tier2: '"VIT" OR "SRM" OR "Manipal" OR "PES University"',
+  tier3: '"Anna University" OR "JNTU" OR "Mumbai University"'
+};
+
+function formatCommaInput(value) {
   if (!value) return "";
   let arr = value.split(",");
   return "(" + arr.map(v => `"${v.trim()}"`).join(" OR ") + ")";
+}
+
+function expandLocation(loc) {
+  if (!loc) return "";
+  let lower = loc.toLowerCase();
+
+  if (lower.includes("india")) {
+    return '("India" OR "Bangalore" OR "Bengaluru" OR "Hyderabad" OR "Pune" OR "Chennai" OR "Mumbai" OR "Gurgaon" OR "Noida")';
+  }
+
+  if (lower.includes("bangalore")) {
+    return '("Bangalore" OR "Bengaluru")';
+  }
+
+  return formatCommaInput(loc);
 }
 
 function expLogic(min, max) {
@@ -148,35 +206,48 @@ function expLogic(min, max) {
   return "(" + arr.join(" OR ") + ")";
 }
 
-function bangaloreMap(loc) {
-  if (!loc) return "";
-  if (loc.toLowerCase().includes("bangalore"))
-    return '("Bangalore" OR "Bengaluru")';
-  return formatInput(loc);
+function populateRoles() {
+  let category = document.getElementById("category").value;
+  let roleSelect = document.getElementById("role");
+  roleSelect.innerHTML = '<option value="">-- Select Role --</option>';
+
+  let roles = category === "tech" ? techRoles : salesRoles;
+
+  for (let key in roles) {
+    let opt = document.createElement("option");
+    opt.value = key;
+    opt.text = roles[key].label;
+    roleSelect.appendChild(opt);
+  }
 }
 
+document.getElementById("category").addEventListener("change", populateRoles);
+
 function generate() {
-  let role = document.getElementById("role").value;
-  if (!role) return alert("Select role");
+  let category = document.getElementById("category").value;
+  let roleKey = document.getElementById("role").value;
+  if (!category || !roleKey) return alert("Select category and role");
 
-  let base = `(${roles[role].titles}) AND (${roles[role].skills})`;
+  let roles = category === "tech" ? techRoles : salesRoles;
+  let roleData = roles[roleKey];
 
-  let loc = bangaloreMap(document.getElementById("location").value);
+  let query = `(${roleData.titles}) AND (${roleData.skills})`;
+
+  let loc = expandLocation(document.getElementById("location").value);
   let exp = expLogic(
     parseInt(document.getElementById("minExp").value),
     parseInt(document.getElementById("maxExp").value)
   );
-
   let cluster = clusters[document.getElementById("cluster").value];
-  let customCompanies = formatInput(document.getElementById("companies").value);
-  let exclude = formatInput(document.getElementById("exclude").value);
-
-  let query = base;
+  let edu = educationMap[document.getElementById("education").value];
+  let companies = formatCommaInput(document.getElementById("companies").value);
+  let exclude = formatCommaInput(document.getElementById("exclude").value);
 
   if (loc) query += ` AND ${loc}`;
   if (exp) query += ` AND ${exp}`;
   if (cluster) query += ` AND (${cluster})`;
-  if (customCompanies) query += ` AND ${customCompanies}`;
+  if (edu) query += ` AND (${edu})`;
+  if (companies) query += ` AND ${companies}`;
   if (exclude) query += ` NOT ${exclude}`;
 
   document.getElementById("output").value = query;
@@ -184,14 +255,14 @@ function generate() {
   document.getElementById("github").value = `site:github.com ${query}`;
 }
 
-function openGoogle() {
-  window.open("https://www.google.com/search?q=" +
-    encodeURIComponent(document.getElementById("xray").value));
-}
-
 function openLinkedIn() {
   window.open("https://www.linkedin.com/search/results/people/?keywords=" +
     encodeURIComponent(document.getElementById("output").value));
+}
+
+function openGoogle() {
+  window.open("https://www.google.com/search?q=" +
+    encodeURIComponent(document.getElementById("xray").value));
 }
 
 function openGitHub() {
