@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Hiring Boolean Pro</title>
+<title>Precision Hiring Engine</title>
 
 <style>
 body {
@@ -53,7 +53,7 @@ textarea { height: 170px; }
 
 <body>
 
-<h1>Hiring Boolean Pro</h1>
+<h1>Precision Hiring Engine</h1>
 
 <div class="card">
 <label>Role Category</label>
@@ -85,6 +85,15 @@ textarea { height: 170px; }
 <option value="faang">FAANG</option>
 <option value="unicorn">Indian Unicorns</option>
 <option value="fintech">Fintech</option>
+</select>
+
+<label>Talent Cluster (Optional)</label>
+<select id="talentCluster">
+<option value="">-- None --</option>
+<option value="blrProduct">Bangalore Product Tech</option>
+<option value="puneProduct">Pune Product Tech</option>
+<option value="startup">Startup Growth</option>
+<option value="enterpriseTech">Enterprise Tech</option>
 </select>
 
 <label>Education Filter</label>
@@ -172,6 +181,13 @@ const clusters = {
   fintech: '"Razorpay" OR "PhonePe" OR "Paytm" OR "Stripe"'
 };
 
+const talentClusters = {
+  blrProduct: '"Symantec" OR "Vmware" OR "Intuit" OR "Veritas" OR "Netapp" OR "Visa" OR "Paypal" OR "Amazon" OR "Flipkart" OR "Myntra" OR "Nvidia" OR "Qualcomm" OR "Adobe" OR "Cisco" OR "Oracle" OR "Intel" OR "Citrix" OR "Walmart"',
+  puneProduct: '"Nvidia" OR "VMware" OR "Pubmatic" OR "Veritas" OR "Druva" OR "Fiserv" OR "Marvell" OR "SAP Labs" OR "Zscaler" OR "FireEye" OR "Qualys" OR "Barclays" OR "Couchbase" OR "Persistent Systems" OR "TIBCO" OR "Red Hat" OR "Nutanix" OR "Cohesity"',
+  startup: '"Swiggy" OR "Zomato" OR "Razorpay" OR "Meesho" OR "PhonePe" OR "Dream11" OR "CRED" OR "Groww" OR "Zepto" OR "Chargebee" OR "Freshworks"',
+  enterpriseTech: '"Microsoft" OR "Google" OR "Amazon" OR "Meta" OR "IBM" OR "Oracle" OR "Cisco" OR "SAP" OR "Dell" OR "Intel" OR "VMware"'
+};
+
 const educationMap = {
   tier1: '"IIT" OR "IIM" OR "BITS Pilani" OR "NIT" OR "IIIT"',
   tier2: '"VIT" OR "SRM" OR "Manipal" OR "PES University"',
@@ -239,6 +255,7 @@ function generate() {
     parseInt(document.getElementById("maxExp").value)
   );
   let cluster = clusters[document.getElementById("cluster").value];
+  let talentCluster = talentClusters[document.getElementById("talentCluster").value];
   let edu = educationMap[document.getElementById("education").value];
   let companies = formatCommaInput(document.getElementById("companies").value);
   let exclude = formatCommaInput(document.getElementById("exclude").value);
@@ -246,6 +263,7 @@ function generate() {
   if (loc) query += ` AND ${loc}`;
   if (exp) query += ` AND ${exp}`;
   if (cluster) query += ` AND (${cluster})`;
+  if (talentCluster) query += ` AND (${talentCluster})`;
   if (edu) query += ` AND (${edu})`;
   if (companies) query += ` AND ${companies}`;
   if (exclude) query += ` NOT ${exclude}`;
