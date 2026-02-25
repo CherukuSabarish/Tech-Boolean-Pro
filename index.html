@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tech Boolean Pro – Internal</title>
+
+<style>
+body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+  font-family: system-ui;
+  padding: 40px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+h1 { color: #38bdf8; }
+
+.card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+select, input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: none;
+  background: #334155;
+  color: white;
+}
+
+button {
+  background: #38bdf8;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 10px;
+  font-weight: 600;
+}
+
+button:hover {
+  background: #0ea5e9;
+}
+
+textarea { height: 150px; }
+</style>
+</head>
+
+<body>
+
+<h1>Tech Boolean Pro – Internal Hiring Tool</h1>
+
+<div class="card">
+<label>Select Role</label>
+<select id="role">
+<option value="">-- Select Role --</option>
+<option value="sre">SRE</option>
+<option value="devops">DevOps</option>
+<option value="sse">SSE</option>
+<option value="sdet">SDET</option>
+</select>
+
+<label>Location</label>
+<input id="location" placeholder="Bangalore">
+
+<label>Years of Experience (Min)</label>
+<input id="minExp" placeholder="3">
+
+<label>Years of Experience (Max)</label>
+<input id="maxExp" placeholder="6">
+</div>
+
+<div class="card">
+<label>Company Cluster (Optional)</label>
+<select id="cluster">
+<option value="">-- None --</option>
+<option value="faang">FAANG</option>
+<option value="unicorn">Indian Unicorns</option>
+<option value="fintech">Fintech</option>
+</select>
+
+<label>Custom Companies (comma separated)</label>
+<input id="companies" placeholder="Microsoft, Amazon">
+
+<label>Exclude Keywords</label>
+<input id="exclude" placeholder="Intern, Contract">
+</div>
+
+<button onclick="generate()">Generate Boolean</button>
+<button onclick="openGoogle()">Open Google X-Ray</button>
+<button onclick="openLinkedIn()">Open LinkedIn</button>
+<button onclick="openGitHub()">Open GitHub X-Ray</button>
+
+<div class="card">
+<h3>Boolean Output</h3>
+<textarea id="output"></textarea>
+
+<h3>Google X-Ray</h3>
+<textarea id="xray"></textarea>
+
+<h3>GitHub X-Ray</h3>
+<textarea id="github"></textarea>
+</div>
+
+<script>
+
+const roles = {
+  sre: {
+    titles: '"SRE" OR "Site Reliability Engineer" OR "Production Engineer"',
+    skills: '"Kubernetes" OR "AWS" OR "Terraform" OR "Prometheus" OR "Docker"'
+  },
+  devops: {
+    titles: '"DevOps Engineer" OR "Platform Engineer"',
+    skills: '"AWS" OR "Azure" OR "CI/CD" OR "Terraform" OR "Jenkins"'
+  },
+  sse: {
+    titles: '"Senior Software Engineer" OR "SSE" OR "Senior Developer"',
+    skills: '"Java" OR "Python" OR "Go" OR "Microservices"'
+  },
+  sdet: {
+    titles: '"SDET" OR "Automation Engineer"',
+    skills: '"Selenium" OR "Cypress" OR "API Testing"'
+  }
+};
+
+const clusters = {
+  faang: '"Google" OR "Amazon" OR "Microsoft" OR "Meta" OR "Apple"',
+  unicorn: '"Flipkart" OR "Swiggy" OR "Razorpay" OR "Meesho" OR "Zomato" OR "PhonePe"',
+  fintech: '"Razorpay" OR "PhonePe" OR "Paytm" OR "Stripe" OR "Wise"'
+};
+
+function formatInput(value) {
+  if (!value) return "";
+  let arr = value.split(",");
+  return "(" + arr.map(v => `"${v.trim()}"`).join(" OR ") + ")";
+}
+
+function expLogic(min, max) {
+  if (!min || !max) return "";
+  let arr = [];
+  for (let i = min; i <= max; i++) arr.push(`"${i} years"`);
+  return "(" + arr.join(" OR ") + ")";
+}
+
+function bangaloreMap(loc) {
+  if (!loc) return "";
+  if (loc.toLowerCase().includes("bangalore"))
+    return '("Bangalore" OR "Bengaluru")';
+  return formatInput(loc);
+}
+
+function generate() {
+  let role = document.getElementById("role").value;
+  if (!role) return alert("Select role");
+
+  let base = `(${roles[role].titles}) AND (${roles[role].skills})`;
+
+  let loc = bangaloreMap(document.getElementById("location").value);
+  let exp = expLogic(
+    parseInt(document.getElementById("minExp").value),
+    parseInt(document.getElementById("maxExp").value)
+  );
+
+  let cluster = clusters[document.getElementById("cluster").value];
+  let customCompanies = formatInput(document.getElementById("companies").value);
+  let exclude = formatInput(document.getElementById("exclude").value);
+
+  let query = base;
+
+  if (loc) query += ` AND ${loc}`;
+  if (exp) query += ` AND ${exp}`;
+  if (cluster) query += ` AND (${cluster})`;
+  if (customCompanies) query += ` AND ${customCompanies}`;
+  if (exclude) query += ` NOT ${exclude}`;
+
+  document.getElementById("output").value = query;
+  document.getElementById("xray").value = `site:linkedin.com/in ${query}`;
+  document.getElementById("github").value = `site:github.com ${query}`;
+}
+
+function openGoogle() {
+  window.open("https://www.google.com/search?q=" +
+    encodeURIComponent(document.getElementById("xray").value));
+}
+
+function openLinkedIn() {
+  window.open("https://www.linkedin.com/search/results/people/?keywords=" +
+    encodeURIComponent(document.getElementById("output").value));
+}
+
+function openGitHub() {
+  window.open("https://www.google.com/search?q=" +
+    encodeURIComponent(document.getElementById("github").value));
+}
+
+</script>
+
+</body>
+</html>
