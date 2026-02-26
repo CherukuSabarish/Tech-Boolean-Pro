@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,13 +13,16 @@ body {
   max-width: 1200px;
   margin: auto;
 }
+
 h1 { color: #38bdf8; }
+
 .card {
   background: #1e293b;
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 25px;
 }
+
 select, input, textarea {
   width: 100%;
   padding: 10px;
@@ -29,6 +33,7 @@ select, input, textarea {
   background: #334155;
   color: white;
 }
+
 button {
   background: #38bdf8;
   border: none;
@@ -38,7 +43,11 @@ button {
   margin-right: 10px;
   font-weight: 600;
 }
-button:hover { background: #0ea5e9; }
+
+button:hover {
+  background: #0ea5e9;
+}
+
 textarea { height: 170px; }
 </style>
 </head>
@@ -70,122 +79,156 @@ textarea { height: 170px; }
 <input id="maxExp">
 </div>
 
+<div class="card">
+<label>Company Cluster (Optional)</label>
+<select id="cluster">
+<option value="">-- None --</option>
+<option value="faang">FAANG</option>
+<option value="unicorn">Indian Unicorns</option>
+<option value="fintech">Fintech</option>
+</select>
+
+<label>Talent Cluster (Optional)</label>
+<select id="talentCluster">
+<option value="">-- None --</option>
+<option value="blrProduct">Bangalore Product Tech</option>
+<option value="puneProduct">Pune Product Tech</option>
+<option value="startup">Startup Growth</option>
+<option value="enterpriseTech">Enterprise Tech</option>
+</select>
+
+<label>Education Filter</label>
+<select id="education">
+<option value="">-- None --</option>
+<option value="tier1">Tier 1</option>
+<option value="tier2">Tier 2</option>
+<option value="tier3">Tier 3</option>
+</select>
+
+<label>Custom Companies (comma separated)</label>
+<input id="companies" placeholder="Microsoft, Amazon">
+
+<label>Exclude Keywords (comma separated)</label>
+<input id="exclude" placeholder="Intern, Contract">
+</div>
+
 <button onclick="generate()">Generate</button>
+<button onclick="openLinkedIn()">Open LinkedIn</button>
+<button onclick="openGoogle()">Google X-Ray</button>
+<button onclick="openGitHub()">GitHub X-Ray</button>
 
 <div class="card">
 <h3>Boolean Output</h3>
 <textarea id="output"></textarea>
+
+<h3>Google X-Ray</h3>
+<textarea id="xray"></textarea>
+
+<h3>GitHub X-Ray</h3>
+<textarea id="github"></textarea>
 </div>
 
 <script>
-
-// =====================
-// SKILL LIBRARY
-// =====================
-
-const skillLibrary = {
-  sre: [
-    { primary: "Kubernetes", synonyms: ["K8s"] },
-    { primary: "AWS", synonyms: [] },
-    { primary: "Terraform", synonyms: [] },
-    { primary: "Docker", synonyms: [] }
-  ],
-  devops: [
-    { primary: "CI/CD", synonyms: [] },
-    { primary: "AWS", synonyms: [] },
-    { primary: "Azure", synonyms: [] },
-    { primary: "Terraform", synonyms: [] }
-  ],
-  se: [
-    { primary: "Java", synonyms: [] },
-    { primary: "Python", synonyms: [] },
-    { primary: "Go", synonyms: [] },
-    { primary: "Microservices", synonyms: [] }
-  ],
-  sdet: [
-    { primary: "Selenium", synonyms: [] },
-    { primary: "Cypress", synonyms: [] },
-    { primary: "API Testing", synonyms: [] }
-  ]
-};
-
-// =====================
-// TECH ROLES (Now mapped to skill library)
-// =====================
 
 const techRoles = {
   sre: {
     label: "SRE",
     titles: '"SRE" OR "Site Reliability Engineer"',
-    skillCategory: "sre"
+    skills: '"Kubernetes" OR "AWS" OR "Terraform" OR "Docker"'
   },
   devops: {
     label: "DevOps",
     titles: '"DevOps Engineer" OR "Platform Engineer"',
-    skillCategory: "devops"
+    skills: '"CI/CD" OR "AWS" OR "Azure" OR "Terraform"'
   },
   se: {
     label: "Software Engineer",
     titles: '"Software Engineer" OR "SE"',
-    skillCategory: "se"
+    skills: '"Java" OR "Python" OR "Go" OR "Microservices"'
   },
   sdet: {
     label: "SDET",
     titles: '"SDET" OR "Automation Engineer"',
-    skillCategory: "sdet"
+    skills: '"Selenium" OR "Cypress" OR "API Testing"'
   }
 };
-
-// =====================
-// SALES ROLES (unchanged)
-// =====================
 
 const salesRoles = {
   enterprise: {
     label: "Enterprise Account Executive",
     titles: '"Enterprise Account Executive" OR "Major Account Manager"',
-    skills: '"Enterprise Sales" OR "SaaS" OR "ARR" OR "Quota"'
+    skills: '"Enterprise Sales" OR "SaaS" OR "ARR" OR "Quota" OR "Revenue"'
   },
   security: {
     label: "Cloud / Security Sales",
     titles: '"Cloud Sales" OR "Cyber Security Sales"',
     skills: '"Cyber Security" OR "Cloud" OR "SaaS"'
+  },
+  channel: {
+    label: "Channel Sales",
+    titles: '"Channel Sales Manager" OR "Partner Account Manager"',
+    skills: '"Channel Sales" OR "Partner Management"'
+  },
+  presales: {
+    label: "Pre-Sales / Solutions",
+    titles: '"Solutions Engineer" OR "Pre Sales Consultant"',
+    skills: '"Technical Pre Sales" OR "Solution Architect" OR "Demo"'
   }
 };
 
-// =====================
-// HELPERS
-// =====================
+const clusters = {
+  faang: '"Google" OR "Amazon" OR "Microsoft" OR "Meta" OR "Apple"',
+  unicorn: '"Flipkart" OR "Swiggy" OR "Razorpay" OR "Meesho" OR "Zomato"',
+  fintech: '"Razorpay" OR "PhonePe" OR "Paytm" OR "Stripe"'
+};
 
-function buildSkills(skillCategory) {
-  const skills = skillLibrary[skillCategory];
-  if (!skills) return "";
+const talentClusters = {
+  blrProduct: '"Symantec" OR "Vmware" OR "Intuit" OR "Veritas" OR "Netapp" OR "Visa" OR "Paypal" OR "Amazon" OR "Flipkart" OR "Myntra" OR "Nvidia" OR "Qualcomm" OR "Adobe" OR "Cisco" OR "Oracle" OR "Intel" OR "Citrix" OR "Walmart"',
+  puneProduct: '"Nvidia" OR "VMware" OR "Pubmatic" OR "Veritas" OR "Druva" OR "Fiserv" OR "Marvell" OR "SAP Labs" OR "Zscaler" OR "FireEye" OR "Qualys" OR "Barclays" OR "Couchbase" OR "Persistent Systems" OR "TIBCO" OR "Red Hat" OR "Nutanix" OR "Cohesity"',
+  startup: '"Swiggy" OR "Zomato" OR "Razorpay" OR "Meesho" OR "PhonePe" OR "Dream11" OR "CRED" OR "Groww" OR "Zepto" OR "Chargebee" OR "Freshworks"',
+  enterpriseTech: '"Microsoft" OR "Google" OR "Amazon" OR "Meta" OR "IBM" OR "Oracle" OR "Cisco" OR "SAP" OR "Dell" OR "Intel" OR "VMware"'
+};
 
-  let skillStrings = skills.map(skill => {
-    if (skill.synonyms.length > 0) {
-      return `("${skill.primary}" OR ${skill.synonyms.map(s => `"${s}"`).join(" OR ")})`;
-    }
-    return `"${skill.primary}"`;
-  });
+const educationMap = {
+  tier1: '"IIT" OR "IIM" OR "BITS Pilani" OR "NIT" OR "IIIT"',
+  tier2: '"VIT" OR "SRM" OR "Manipal" OR "PES University"',
+  tier3: '"Anna University" OR "JNTU" OR "Mumbai University"'
+};
 
-  return skillStrings.join(" OR ");
+function formatCommaInput(value) {
+  if (!value) return "";
+  let arr = value.split(",");
+  return "(" + arr.map(v => `"${v.trim()}"`).join(" OR ") + ")";
+}
+
+function expandLocation(loc) {
+  if (!loc) return "";
+  let lower = loc.toLowerCase();
+
+  if (lower.includes("india")) {
+    return '("India" OR "Bangalore" OR "Bengaluru" OR "Hyderabad" OR "Pune" OR "Chennai" OR "Mumbai" OR "Gurgaon" OR "Noida")';
+  }
+
+  if (lower.includes("bangalore")) {
+    return '("Bangalore" OR "Bengaluru")';
+  }
+
+  return formatCommaInput(loc);
+}
+
+function expLogic(min, max) {
+  if (!min || !max) return "";
+  let arr = [];
+  for (let i = min; i <= max; i++) arr.push(`"${i} years"`);
+  return "(" + arr.join(" OR ") + ")";
 }
 
 function populateRoles() {
   let category = document.getElementById("category").value;
   let roleSelect = document.getElementById("role");
-
   roleSelect.innerHTML = '<option value="">-- Select Role --</option>';
 
-  let roles;
-
-  if (category === "tech") {
-    roles = techRoles;
-  } else if (category === "sales") {
-    roles = salesRoles;
-  } else {
-    return;
-  }
+  let roles = category === "tech" ? techRoles : salesRoles;
 
   for (let key in roles) {
     let opt = document.createElement("option");
@@ -195,31 +238,55 @@ function populateRoles() {
   }
 }
 
-document.getElementById("category")
-  .addEventListener("change", populateRoles);
+document.getElementById("category").addEventListener("change", populateRoles);
 
 function generate() {
   let category = document.getElementById("category").value;
   let roleKey = document.getElementById("role").value;
-
-  if (!category || !roleKey) {
-    alert("Select category and role");
-    return;
-  }
+  if (!category || !roleKey) return alert("Select category and role");
 
   let roles = category === "tech" ? techRoles : salesRoles;
   let roleData = roles[roleKey];
 
-  let query;
+  let query = `(${roleData.titles}) AND (${roleData.skills})`;
 
-  if (category === "tech") {
-    let skillsBoolean = buildSkills(roleData.skillCategory);
-    query = `(${roleData.titles}) AND (${skillsBoolean})`;
-  } else {
-    query = `(${roleData.titles}) AND (${roleData.skills})`;
-  }
+  let loc = expandLocation(document.getElementById("location").value);
+  let exp = expLogic(
+    parseInt(document.getElementById("minExp").value),
+    parseInt(document.getElementById("maxExp").value)
+  );
+  let cluster = clusters[document.getElementById("cluster").value];
+  let talentCluster = talentClusters[document.getElementById("talentCluster").value];
+  let edu = educationMap[document.getElementById("education").value];
+  let companies = formatCommaInput(document.getElementById("companies").value);
+  let exclude = formatCommaInput(document.getElementById("exclude").value);
+
+  if (loc) query += ` AND ${loc}`;
+  if (exp) query += ` AND ${exp}`;
+  if (cluster) query += ` AND (${cluster})`;
+  if (talentCluster) query += ` AND (${talentCluster})`;
+  if (edu) query += ` AND (${edu})`;
+  if (companies) query += ` AND ${companies}`;
+  if (exclude) query += ` NOT ${exclude}`;
 
   document.getElementById("output").value = query;
+  document.getElementById("xray").value = `site:linkedin.com/in ${query}`;
+  document.getElementById("github").value = `site:github.com ${query}`;
+}
+
+function openLinkedIn() {
+  window.open("https://www.linkedin.com/search/results/people/?keywords=" +
+    encodeURIComponent(document.getElementById("output").value));
+}
+
+function openGoogle() {
+  window.open("https://www.google.com/search?q=" +
+    encodeURIComponent(document.getElementById("xray").value));
+}
+
+function openGitHub() {
+  window.open("https://www.google.com/search?q=" +
+    encodeURIComponent(document.getElementById("github").value));
 }
 
 </script>
