@@ -129,30 +129,37 @@ textarea { height: 170px; }
 
 <script>
 
-const techRoles = {
-  sre: {
-    label: "SRE",
-    titles: '"SRE" OR "Site Reliability Engineer"',
-    skills: '"Kubernetes" OR "AWS" OR "Terraform" OR "Docker"'
-  },
-  devops: {
-    label: "DevOps",
-    titles: '"DevOps Engineer" OR "Platform Engineer"',
-    skills: '"CI/CD" OR "AWS" OR "Azure" OR "Terraform"'
-  },
-  se: {
-    label: "Software Engineer",
-    titles: '"Software Engineer" OR "SE"',
-    skills: '"Java" OR "Python" OR "Go" OR "Microservices"'
-  },
-  sdet: {
-    label: "SDET",
-    titles: '"SDET" OR "Automation Engineer"',
-    skills: '"Selenium" OR "Cypress" OR "API Testing"'
-  }
+// =====================
+// SKILL LIBRARY (V2 Layer)
+// =====================
+
+const skillLibrary = {
+  sre: [
+    { primary: "Kubernetes", synonyms: ["K8s"] },
+    { primary: "AWS", synonyms: [] },
+    { primary: "Terraform", synonyms: [] },
+    { primary: "Docker", synonyms: [] }
+  ],
+  devops: [
+    { primary: "CI/CD", synonyms: [] },
+    { primary: "AWS", synonyms: [] },
+    { primary: "Azure", synonyms: [] },
+    { primary: "Terraform", synonyms: [] }
+  ],
+  se: [
+    { primary: "Java", synonyms: [] },
+    { primary: "Python", synonyms: [] },
+    { primary: "Go", synonyms: [] },
+    { primary: "Microservices", synonyms: [] }
+  ],
+  sdet: [
+    { primary: "Selenium", synonyms: [] },
+    { primary: "Cypress", synonyms: [] },
+    { primary: "API Testing", synonyms: [] }
+  ]
 };
 
-const salesRoles = {
+const techRoles = {
   enterprise: {
     label: "Enterprise Account Executive",
     titles: '"Enterprise Account Executive" OR "Major Account Manager"',
