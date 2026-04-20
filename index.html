@@ -238,6 +238,7 @@ textarea.form-area:focus{border-color:var(--accent);}
         <option value="">— Select Category —</option>
         <option value="tech">Technology</option>
         <option value="sales">Sales</option>
+        <option value="veterans">🎖 Veterans (Indian Defence)</option>
         <option value="custom">⭐ My Custom Roles</option>
       </select>
 
@@ -383,6 +384,34 @@ const salesRoles = {
   channel:   { label:"Channel Sales",       titles:'"Channel Sales Manager" OR "Partner Account Manager"',           skills:'"Channel Sales" OR "Partner Management"' },
   presales:  { label:"Pre-Sales / Solutions",titles:'"Solutions Engineer" OR "Pre Sales Consultant"',               skills:'"Technical Pre Sales" OR "Solution Architect" OR "Demo"' }
 };
+// ── VETERANS (India — Army, Navy, Air Force, Coast Guard) ──────────
+const veteranRoles = {
+  vet_any: {
+    label: "Veterans — Any Role",
+    titles: '"Ex-Indian Army" OR "Ex-Army" OR "Indian Army" OR "Ex-Navy" OR "Indian Navy" OR "Ex-Air Force" OR "Indian Air Force" OR "Ex-IAF" OR "Ex-Coast Guard" OR "Indian Coast Guard" OR "Ex-NDA" OR "Ex-Defence" OR "Retired Army" OR "Retired Navy" OR "Retired Air Force" OR "Fauji" OR "Armed Forces Veteran"',
+    skills: '"Leadership" OR "Operations" OR "Strategy" OR "Project Management" OR "Logistics" OR "Supply Chain" OR "Security" OR "Crisis Management" OR "Team Management" OR "Discipline"'
+  },
+  vet_tech: {
+    label: "Veterans — Tech / IT",
+    titles: '"Ex-Indian Army" OR "Ex-Navy" OR "Ex-Air Force" OR "Ex-IAF" OR "Ex-Defence" OR "Retired Army" OR "Retired Air Force" OR "Armed Forces Veteran"',
+    skills: '"IT" OR "Cybersecurity" OR "Network" OR "Systems" OR "Technology" OR "Software" OR "Cloud" OR "Infrastructure" OR "Signals" OR "EME" OR "AFNET"'
+  },
+  vet_ops: {
+    label: "Veterans — Operations / Logistics",
+    titles: '"Ex-Indian Army" OR "Ex-Navy" OR "Ex-Air Force" OR "Ex-Coast Guard" OR "Ex-Defence" OR "Retired Army" OR "Retired Navy" OR "Fauji"',
+    skills: '"Operations" OR "Logistics" OR "Supply Chain" OR "Fleet Management" OR "Procurement" OR "Administration" OR "Facility Management" OR "Security Management"'
+  },
+  vet_sales: {
+    label: "Veterans — Sales / BD",
+    titles: '"Ex-Indian Army" OR "Ex-Navy" OR "Ex-Air Force" OR "Ex-Defence" OR "Retired Army" OR "Armed Forces Veteran"',
+    skills: '"Sales" OR "Business Development" OR "Account Management" OR "Client Relations" OR "Territory Management" OR "Channel Sales"'
+  },
+  vet_leadership: {
+    label: "Veterans — Leadership / Consulting",
+    titles: '"Ex-Indian Army" OR "Ex-Navy" OR "Ex-Air Force" OR "Ex-IAF" OR "Ex-Defence" OR "Retired Colonel" OR "Retired Brigadier" OR "Retired Major General" OR "Retired Vice Admiral" OR "Retired Air Marshal" OR "Ex-NDA"',
+    skills: '"Leadership" OR "Strategy" OR "Consulting" OR "General Management" OR "P&L" OR "Business Transformation" OR "Change Management" OR "Corporate Training"'
+  }
+};
 const clusters = {
   faang:  '"Google" OR "Amazon" OR "Microsoft" OR "Meta" OR "Apple"',
   unicorn:'"Flipkart" OR "Swiggy" OR "Razorpay" OR "Meesho" OR "Zomato"',
@@ -494,6 +523,7 @@ function populateRoles() {
   let roles = {};
   if (category === 'tech') roles = techRoles;
   else if (category === 'sales') roles = salesRoles;
+  else if (category === 'veterans') roles = veteranRoles;
   else if (category === 'custom') {
     getCustomRoles().forEach(r => { roles[r.key] = r; });
   }
@@ -509,6 +539,7 @@ function populateRoles() {
 function getRoleData(category, key) {
   if (category === 'tech') return techRoles[key];
   if (category === 'sales') return salesRoles[key];
+  if (category === 'veterans') return veteranRoles[key];
   if (category === 'custom') return getCustomRoles().find(r => r.key === key);
   return null;
 }
