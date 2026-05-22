@@ -168,6 +168,16 @@ textarea.form-area:focus{border-color:var(--accent);}
 /* ── DIVIDER ── */
 .divider{height:1px;background:var(--border);margin:20px 0;}
 
+/* ── LOGIC TOGGLE ── */
+.logic-btn{
+  flex:1;padding:7px 6px;background:var(--surface2);border:none;
+  color:var(--muted);font-family:'Syne',sans-serif;font-size:10px;font-weight:700;
+  cursor:pointer;transition:all 0.2s;letter-spacing:0.5px;
+}
+.logic-btn:not(:last-child){border-right:1px solid var(--border);}
+.logic-btn.active{background:rgba(79,255,176,0.12);color:var(--accent);}
+.logic-btn:hover:not(.active){color:var(--text);}
+
 /* ════════════════════════════
    CUSTOM ROLES MODAL
 ════════════════════════════ */
@@ -292,31 +302,92 @@ textarea.form-area:focus{border-color:var(--accent);}
     </div>
   </div>
 
+  <!-- Mandatory Keywords card -->
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-head">
+      <div class="card-dot" style="background:var(--warn);box-shadow:0 0 6px var(--warn);"></div>
+      <div class="card-title" style="color:var(--warn);">🔒 Mandatory Keywords</div>
+      <span style="margin-left:auto;font-size:10px;color:var(--muted);">Profile MUST contain these</span>
+    </div>
+    <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px;">
+        <label>Required Skills / Keywords</label>
+        <input id="mandatory" placeholder='e.g.  Python, Cloud   or   "SRE" AND "Python" AND "Cloud"' oninput="updateMandatoryPreview()">
+        <div style="font-size:10px;color:var(--muted);margin-top:-10px;margin-bottom:0;">
+          Comma-separated uses the Logic Mode below &nbsp;·&nbsp; Switch to <strong style="color:var(--accent2);">Custom</strong> to write full boolean (AND/OR/parentheses)
+        </div>
+      </div>
+      <div style="min-width:150px;">
+        <label>Logic Mode</label>
+        <div style="display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+          <button id="logic-or"  onclick="setLogic('OR')"  class="logic-btn active">OR</button>
+          <button id="logic-and" onclick="setLogic('AND')" class="logic-btn">AND</button>
+          <button id="logic-raw" onclick="setLogic('RAW')" class="logic-btn">Custom</button>
+        </div>
+        <div id="logic-hint" style="font-size:10px;color:var(--muted);margin-top:5px;">Any one skill is enough</div>
+      </div>
+    </div>
+    <div id="mandatory-preview" style="margin-top:10px;font-size:11px;color:var(--accent2);font-family:'JetBrains Mono',monospace;background:var(--surface2);border:1px solid rgba(0,207,255,0.2);border-radius:7px;padding:8px 12px;display:none;"></div>
+  </div>
+
   <!-- Action Buttons -->
   <div class="btn-row">
-    <button class="btn btn-primary" onclick="generate()">🔍 Run Search</button>
+    <button class="btn btn-primary" onclick="generate()">⚡ Generate Query</button>
+    <button class="btn btn-ghost" onclick="openGoogle()" title="Google X-Ray search">🔍 Google X-Ray</button>
     <button class="btn btn-linkedin" onclick="openLinkedIn()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
       LinkedIn
     </button>
-    <button class="btn btn-ghost" onclick="openGoogle()">🔍 Google X-Ray</button>
+    <button class="btn btn-ghost" onclick="openStackOverflow()" title="StackOverflow Jobs" style="border-color:rgba(255,179,64,0.3);color:var(--warn);">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.986 21.865v-6.404h2.134V24H1.844v-8.539h2.13v6.404h15.012zM6.111 19.731H17.78v-2.137H6.111v2.137zm.259-4.852 11.383 2.381.45-2.077-11.382-2.382-.451 2.078zm1.359-5.056 10.57 4.93.894-1.95-10.57-4.929-.894 1.95zm2.748-4.691 8.946 7.404 1.362-1.681-8.945-7.403-1.363 1.68zm5.101-5.049-1.742 1.294 6.921 9.42 1.742-1.294-6.921-9.42z"/></svg>
+      StackOverflow
+    </button>
+    <button class="btn btn-ghost" onclick="openGitHub()" title="GitHub search" style="border-color:rgba(192,132,252,0.3);color:var(--ai);">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+      GitHub
+    </button>
     <button class="btn btn-ghost" style="border-color:rgba(192,132,252,0.3);color:var(--ai);" onclick="openModal()">＋ Add Custom Role</button>
   </div>
 
   <!-- Outputs -->
   <div class="out-wrap">
     <div class="out-head">
-      <span class="out-label">Boolean Query</span>
+      <span class="out-label">⚡ Boolean Query</span>
       <button class="copy-btn" onclick="copyText('output',this)">Copy</button>
     </div>
     <textarea class="out-area" id="output" placeholder="Boolean string appears here after generating..."></textarea>
   </div>
-  <div class="out-wrap">
-    <div class="out-head">
-      <span class="out-label">Google X-Ray</span>
-      <button class="copy-btn" onclick="copyText('xray',this)">Copy</button>
+  <div class="grid-2">
+    <div class="out-wrap" style="margin-bottom:0;">
+      <div class="out-head">
+        <span class="out-label" style="color:var(--accent2);">🔍 Google X-Ray</span>
+        <div style="display:flex;gap:6px;">
+          <button class="copy-btn" onclick="copyText('xray',this)">Copy</button>
+          <button class="copy-btn" style="color:var(--accent2);border-color:rgba(0,207,255,0.3);" onclick="openGoogle()">Open ↗</button>
+        </div>
+      </div>
+      <textarea class="out-area" id="xray" placeholder="Google X-Ray string appears here..." style="min-height:70px;"></textarea>
     </div>
-    <textarea class="out-area" id="xray" placeholder="Google X-Ray string appears here..."></textarea>
+    <div class="out-wrap" style="margin-bottom:0;">
+      <div class="out-head">
+        <span class="out-label" style="color:var(--warn);">📦 StackOverflow</span>
+        <div style="display:flex;gap:6px;">
+          <button class="copy-btn" onclick="copyText('so-query',this)">Copy</button>
+          <button class="copy-btn" style="color:var(--warn);border-color:rgba(255,179,64,0.3);" onclick="openStackOverflow()">Open ↗</button>
+        </div>
+      </div>
+      <textarea class="out-area" id="so-query" placeholder="StackOverflow X-Ray string appears here..." style="min-height:70px;"></textarea>
+    </div>
+  </div>
+  <div class="out-wrap" style="margin-top:14px;">
+    <div class="out-head">
+      <span class="out-label" style="color:var(--ai);">🐙 GitHub</span>
+      <div style="display:flex;gap:6px;">
+        <button class="copy-btn" onclick="copyText('gh-query',this)">Copy</button>
+        <button class="copy-btn" style="color:var(--ai);border-color:rgba(192,132,252,0.3);" onclick="openGitHub()">Open ↗</button>
+      </div>
+    </div>
+    <textarea class="out-area" id="gh-query" placeholder="GitHub search string appears here..." style="min-height:60px;"></textarea>
   </div>
 
 
@@ -564,6 +635,42 @@ function expLogic(min, max) {
   return '(' + arr.join(' OR ') + ')';
 }
 
+// ══════════════════════════════════════════════
+// MANDATORY KEYWORDS LOGIC
+// ══════════════════════════════════════════════
+let mandatoryLogicMode = 'OR';
+
+function setLogic(mode) {
+  mandatoryLogicMode = mode;
+  document.querySelectorAll('.logic-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('logic-' + mode.toLowerCase()).classList.add('active');
+  const hints = { OR: 'Any one skill is enough', AND: 'ALL skills must appear', RAW: 'Use your own AND/OR/()' };
+  document.getElementById('logic-hint').textContent = hints[mode];
+  updateMandatoryPreview();
+}
+
+function buildMandatory() {
+  const val = document.getElementById('mandatory').value.trim();
+  if (!val) return '';
+  if (mandatoryLogicMode === 'RAW') return '(' + val + ')';
+  // Split by comma
+  const terms = val.split(',').map(t => t.trim()).filter(Boolean);
+  if (!terms.length) return '';
+  const quoted = terms.map(t => t.startsWith('"') ? t : `"${t}"`);
+  return '(' + quoted.join(` ${mandatoryLogicMode} `) + ')';
+}
+
+function updateMandatoryPreview() {
+  const preview = document.getElementById('mandatory-preview');
+  const built = buildMandatory();
+  if (built) {
+    preview.textContent = '→ ' + built;
+    preview.style.display = 'block';
+  } else {
+    preview.style.display = 'none';
+  }
+}
+
 function generate() {
   const category = document.getElementById('category').value;
   const roleKey  = document.getElementById('role').value;
@@ -573,24 +680,50 @@ function generate() {
   if (!rd) { alert('Role data not found.'); return; }
 
   let q = `(${rd.titles}) AND (${rd.skills})`;
-  const loc     = expandLoc(document.getElementById('location').value);
-  const exp     = expLogic(parseInt(document.getElementById('minExp').value), parseInt(document.getElementById('maxExp').value));
-  const cluster = clusters[document.getElementById('cluster').value];
-  const tc      = talentClusters[document.getElementById('talentCluster').value];
-  const edu     = educationMap[document.getElementById('education').value];
-  const cos     = fmtComma(document.getElementById('companies').value);
-  const excl    = fmtComma(document.getElementById('exclude').value);
+  const loc      = expandLoc(document.getElementById('location').value);
+  const exp      = expLogic(parseInt(document.getElementById('minExp').value), parseInt(document.getElementById('maxExp').value));
+  const cluster  = clusters[document.getElementById('cluster').value];
+  const tc       = talentClusters[document.getElementById('talentCluster').value];
+  const edu      = educationMap[document.getElementById('education').value];
+  const cos      = fmtComma(document.getElementById('companies').value);
+  const excl     = fmtComma(document.getElementById('exclude').value);
+  const mandatory = buildMandatory();
 
-  if (loc)     q += ` AND ${loc}`;
-  if (exp)     q += ` AND ${exp}`;
-  if (cluster) q += ` AND (${cluster})`;
-  if (tc)      q += ` AND (${tc})`;
-  if (edu)     q += ` AND (${edu})`;
-  if (cos)     q += ` AND ${cos}`;
-  if (excl)    q += ` NOT ${excl}`;
+  if (mandatory) q += ` AND ${mandatory}`;
+  if (loc)       q += ` AND ${loc}`;
+  if (exp)       q += ` AND ${exp}`;
+  if (cluster)   q += ` AND (${cluster})`;
+  if (tc)        q += ` AND (${tc})`;
+  if (edu)       q += ` AND (${edu})`;
+  if (cos)       q += ` AND ${cos}`;
+  if (excl)      q += ` NOT ${excl}`;
 
   document.getElementById('output').value = q;
   document.getElementById('xray').value = `site:linkedin.com/in ${q}`;
+
+  // StackOverflow X-Ray — searches SO user profiles & developer stories
+  document.getElementById('so-query').value = `site:stackoverflow.com/users ${buildSOQuery(rd, mandatory)}`;
+
+  // GitHub X-Ray — searches GitHub profiles/readmes
+  document.getElementById('gh-query').value = buildGHQuery(rd, mandatory, document.getElementById('location').value);
+}
+
+function buildSOQuery(rd, mandatory) {
+  // Extract first 2-3 skill terms from role skills for SO (keep it tight)
+  const skillMatch = rd.skills.match(/"([^"]+)"/g) || [];
+  const topSkills = skillMatch.slice(0, 3).join(' OR ');
+  const mandatoryMatch = mandatory ? mandatory.match(/"([^"]+)"/g) || [] : [];
+  const mandTerms = mandatoryMatch.slice(0, 2).join(' ');
+  return [topSkills, mandTerms].filter(Boolean).join(' ');
+}
+
+function buildGHQuery(rd, mandatory, loc) {
+  const skillMatch = rd.skills.match(/"([^"]+)"/g) || [];
+  const topSkills = skillMatch.slice(0, 3).map(s => s.replace(/"/g, '')).join(' ');
+  const mandatoryMatch = mandatory ? mandatory.match(/"([^"]+)"/g) || [] : [];
+  const mandTerms = mandatoryMatch.slice(0, 2).map(s => s.replace(/"/g, '')).join(' ');
+  const locStr = loc ? `location:"${loc.split('/')[0].trim()}"` : '';
+  return `${topSkills} ${mandTerms} ${locStr}`.trim();
 }
 
 function openLinkedIn() {
@@ -607,6 +740,19 @@ function openGoogle() {
   const xray = document.getElementById('xray').value;
   if (!xray) { alert('Generate a query first.'); return; }
   window.open('https://www.google.com/search?q=' + encodeURIComponent(xray), '_blank');
+}
+
+function openStackOverflow() {
+  const q = document.getElementById('so-query').value;
+  if (!q) { alert('Generate a query first.'); return; }
+  window.open('https://www.google.com/search?q=' + encodeURIComponent(q), '_blank');
+}
+
+function openGitHub() {
+  const q = document.getElementById('gh-query').value;
+  if (!q) { alert('Generate a query first.'); return; }
+  // GitHub people search
+  window.open('https://github.com/search?type=users&q=' + encodeURIComponent(q), '_blank');
 }
 
 
