@@ -1168,14 +1168,16 @@ ${jd.substring(0, 2000)}`;
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
+        max_tokens: 2000,
         messages: [{ role: 'user', content: booleanPrompt }]
       })
     });
     const d1 = await r1.json();
     const raw1 = d1.content?.[0]?.text || '{}';
     const clean1 = raw1.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(clean1);
+    // Extract JSON object even if response has extra text around it
+    const jsonMatch1 = clean1.match(/\{[\s\S]*\}/);
+    const parsed = JSON.parse(jsonMatch1 ? jsonMatch1[0] : clean1);
 
     // Populate boolean results
     document.getElementById('res-boolean').textContent = parsed.booleanString || '—';
@@ -1216,14 +1218,15 @@ JD: ${jd.substring(0, 1500)}`;
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
+        max_tokens: 1500,
         messages: [{ role: 'user', content: iqPrompt }]
       })
     });
     const d2 = await r2.json();
     const raw2 = d2.content?.[0]?.text || '[]';
     const clean2 = raw2.replace(/```json|```/g, '').trim();
-    const questions = JSON.parse(clean2);
+    const jsonMatch2 = clean2.match(/\[[\s\S]*\]/);
+    const questions = JSON.parse(jsonMatch2 ? jsonMatch2[0] : clean2);
 
     const iqEl = document.getElementById('res-interview');
     iqEl.innerHTML = questions.map(q => `
@@ -1289,14 +1292,15 @@ JD: ${jd.substring(0, 1200)}`;
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1200,
+        max_tokens: 1500,
         messages: [{ role: 'user', content: profilePrompt }]
       })
     });
     const d3 = await r3.json();
     const raw3 = d3.content?.[0]?.text || '{}';
     const clean3 = raw3.replace(/```json|```/g, '').trim();
-    const checklist = JSON.parse(clean3);
+    const jsonMatch3 = clean3.match(/\{[\s\S]*\}/);
+    const checklist = JSON.parse(jsonMatch3 ? jsonMatch3[0] : clean3);
 
     // Render checklist sections
     const profEl = document.getElementById('res-profiles');
@@ -1332,7 +1336,13 @@ JD: ${jd.substring(0, 1200)}`;
 
   } catch(err) {
     document.getElementById('jd-loading').style.display = 'none';
-    showJdError('Analysis failed: ' + (err.message || 'Please try again.') + ' — Make sure you are connected to the internet.');
+    let errMsg = err.message || 'Unknown error';
+    if (errMsg.includes('JSON') || errMsg.includes('Unterminated')) {
+      errMsg = 'AI response was too long and got cut off. Your JD may be very long — try pasting just the key requirements section.';
+    } else if (errMsg.includes('fetch') || errMsg.includes('network')) {
+      errMsg = 'Network error — please check your internet connection and try again.';
+    }
+    showJdError('Analysis failed: ' + errMsg);
     console.error(err);
   }
 }
