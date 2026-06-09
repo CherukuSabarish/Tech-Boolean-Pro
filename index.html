@@ -965,7 +965,8 @@ function buildGHQuery(rd, mandatory, loc) {
   const mandTerms = mandatoryMatch.slice(0, 2).join(' OR ');
   const combined = [topSkills, mandTerms].filter(Boolean).join(' OR ');
   const indiaLoc = '"India" OR "Bangalore" OR "Mumbai" OR "Delhi" OR "Hyderabad" OR "Pune" OR "Chennai"';
-  return `site:github.com -inurl:orgs -inurl:repos -inurl:gists -inurl:followers -inurl:blob -inurl:tree (${indiaLoc}) (${combined || topSkills})`;
+  // "block or report user" = unique text on every GitHub individual profile page only
+  return `site:github.com "block or report user" (${combined || topSkills}) (${indiaLoc})`;
 }
 
 function openLinkedIn() {
@@ -1188,7 +1189,10 @@ ${jd.substring(0, 2000)}`;
     const ghSkillsStr = ghSkillsArr.length > 0
       ? ghSkillsArr.map(s => '"' + s.trim() + '"').join(' OR ')
       : (parsed.titles || []).slice(0,2).map(s => '"' + s.trim() + '"').join(' OR ');
-    const ghQuery = 'site:github.com -inurl:orgs -inurl:repos -inurl:gists -inurl:followers -inurl:blob -inurl:tree ("India" OR "Bangalore" OR "Mumbai" OR "Hyderabad" OR "Pune" OR "Chennai" OR "Delhi") (' + ghSkillsStr + ')';
+    // "block or report user" text appears ONLY on individual GitHub profile pages
+    const ghTitlesStr = (parsed.titles || []).slice(0,2).map(s => '"' + s.trim() + '"').join(' OR ');
+    const ghRoleStr = ghTitlesStr || ghSkillsStr;
+    const ghQuery = 'site:github.com "block or report user" (' + ghRoleStr + ') (' + ghSkillsStr + ') ("India" OR "Bangalore" OR "Mumbai" OR "Hyderabad" OR "Pune" OR "Chennai" OR "Delhi")';
     console.log('GitHub query:', ghQuery);
     document.getElementById('res-gh').textContent = ghQuery;
 
