@@ -213,6 +213,73 @@ textarea.form-area:focus{border-color:var(--accent);}
 
 
 
+
+/* ── JD ANALYZER ── */
+.jd-textarea{
+  width:100%;min-height:140px;background:var(--surface2);
+  border:1px solid var(--border2);border-radius:var(--r);
+  color:var(--text);font-family:'Epilogue',sans-serif;font-size:13px;
+  padding:14px;resize:vertical;outline:none;transition:border 0.2s;
+  line-height:1.6;
+}
+.jd-textarea:focus{border-color:var(--ai);}
+.jd-textarea::placeholder{color:var(--muted);}
+.ai-result-box{
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:var(--r);padding:18px;margin-bottom:16px;
+  border-left:3px solid var(--ai);
+}
+.ai-result-box.green{border-left-color:var(--accent);}
+.ai-result-box.blue{border-left-color:var(--accent2);}
+.ai-result-box.warn{border-left-color:var(--warn);}
+.ai-section-title{
+  font-family:'Syne',sans-serif;font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;
+}
+.ai-loading{
+  display:flex;align-items:center;gap:10px;
+  color:var(--muted);font-size:12px;padding:20px 0;
+}
+.ai-spinner{
+  width:18px;height:18px;border:2px solid var(--border2);
+  border-top-color:var(--ai);border-radius:50%;
+  animation:spin 0.8s linear infinite;flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.company-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+.company-chip{
+  font-size:11px;padding:4px 10px;border-radius:20px;
+  background:rgba(0,207,255,0.08);border:1px solid rgba(0,207,255,0.2);
+  color:var(--accent2);cursor:pointer;transition:all 0.15s;
+}
+.company-chip:hover{background:rgba(0,207,255,0.16);}
+.interview-q{
+  padding:10px 0;border-bottom:1px solid var(--border);
+  font-size:12px;color:var(--text);line-height:1.6;
+}
+.interview-q:last-child{border-bottom:none;}
+.interview-q strong{color:var(--accent);font-size:10px;text-transform:uppercase;
+  letter-spacing:1px;display:block;margin-bottom:3px;}
+.profile-row{
+  display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);
+  align-items:flex-start;
+}
+.profile-row:last-child{border-bottom:none;}
+.profile-avatar{
+  width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:grid;place-items:center;font-size:14px;flex-shrink:0;
+}
+.profile-name{font-weight:600;font-size:12.5px;color:var(--text);}
+.profile-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.profile-skills{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.skill-tag{font-size:9.5px;padding:2px 7px;border-radius:10px;
+  background:var(--accent-glow);border:1px solid rgba(79,255,176,0.2);color:var(--accent);}
+.jd-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.jd-tab{font-size:11px;padding:5px 14px;border-radius:20px;cursor:pointer;
+  border:1px solid var(--border2);color:var(--muted);background:transparent;
+  font-family:'Syne',sans-serif;font-weight:700;transition:all 0.2s;}
+.jd-tab.active{background:var(--ai-glow);border-color:rgba(192,132,252,0.4);color:var(--ai);}
+
 </style>
 </head>
 <body>
@@ -225,18 +292,19 @@ textarea.form-area:focus{border-color:var(--accent);}
       <div class="brand-name">Talent<span>Trace</span></div>
     </div>
   </div>
-  <div class="nav-pill">✦ AI POWERED v3</div>
+  <div class="nav-pill">✦ AI POWERED v4b</div>
 </nav>
 
 <!-- ── TABS ── -->
 <div class="tabs">
   <button class="tab active" onclick="switchTab('builder',this)">⚙️ Query Builder</button>
+  <button class="tab" onclick="switchTab('jd',this)">🧠 JD Analyzer <span style="font-size:9px;background:rgba(192,132,252,0.15);color:var(--ai);border:1px solid rgba(192,132,252,0.3);border-radius:10px;padding:1px 6px;margin-left:2px;">AI</span></button>
 </div>
 
 <!-- ══════════════════════════════
      TAB 1 — QUERY BUILDER
 ══════════════════════════════ -->
-<div class="panel active" id="panel-builder">
+<div class="panel active" id="panel-builder" style="display:block;">
 
   <div class="grid-2">
     <!-- Role Config -->
@@ -254,6 +322,9 @@ textarea.form-area:focus{border-color:var(--accent);}
 
       <label>Role</label>
       <select id="role"><option value="">— Select Role —</option></select>
+      <div id="lgbtq-tip" style="display:none;margin-top:10px;padding:10px 14px;background:rgba(168,139,250,0.08);border:1px solid rgba(168,139,250,0.25);border-radius:8px;font-size:10.5px;color:#a78bfa;line-height:1.6;">
+        🏳️‍🌈 <strong>LGBTQ+ Sourcing Note:</strong> Results depend on candidates who have self-disclosed on their profiles (ERG membership, Pride@ groups, advocacy work). The Boolean targets professional signals like <em>Pride@Company</em>, <em>Out in Tech</em>, <em>Humsafar</em>, <em>ERG Lead</em> — not identity directly. Always combine with location and mandatory keywords for tighter results.
+      </div>
 
       <label>Location</label>
       <input id="location" placeholder="India / Bangalore / Hyderabad">
@@ -393,6 +464,134 @@ textarea.form-area:focus{border-color:var(--accent);}
 
 </div>
 
+
+<!-- ══════════════════════════════
+     TAB 2 — JD ANALYZER
+══════════════════════════════ -->
+<div class="panel" id="panel-jd" style="display:none;padding:28px 36px;">
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-head">
+      <div class="card-dot" style="background:var(--ai);box-shadow:0 0 6px var(--ai);"></div>
+      <div class="card-title" style="color:var(--ai);">🧠 JD Analyzer — AI Powered</div>
+      <span style="margin-left:auto;font-size:10px;color:var(--muted);">Paste any JD · AI does the rest</span>
+    </div>
+    <textarea class="jd-textarea" id="jd-input"
+      placeholder="Paste your Job Description here...
+
+Example: We are looking for a Senior DevOps Engineer with 5+ years experience in Kubernetes, Terraform, AWS or GCP. The candidate should have strong scripting skills in Python or Bash, experience with CI/CD pipelines, and exposure to observability tools like Datadog or Prometheus. Prior experience in a fast-paced product startup is preferred..."></textarea>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+      <button class="btn btn-primary" onclick="analyzeJD()">🧠 Analyze JD</button>
+      <button class="btn btn-ghost" onclick="clearJD()">✕ Clear</button>
+    </div>
+    <div id="jd-error" style="display:none;margin-top:10px;font-size:11px;color:var(--danger);padding:8px 12px;background:rgba(255,107,107,0.08);border-radius:8px;border:1px solid rgba(255,107,107,0.2);"></div>
+  </div>
+
+  <!-- Results area -->
+  <div id="jd-results" style="display:none;">
+
+    <!-- Sub-tabs for results -->
+    <div class="jd-tabs">
+      <button class="jd-tab active" onclick="switchJdTab('boolean')">🔡 Boolean & Search Strings</button>
+      <button class="jd-tab" onclick="switchJdTab('companies')">🏢 Target Companies</button>
+      <button class="jd-tab" onclick="switchJdTab('interview')">❓ Interview Questions</button>
+      <button class="jd-tab" onclick="switchJdTab('profile')">✅ Profile Checklist</button>
+    </div>
+
+    <!-- Boolean Strings -->
+    <div id="jdtab-boolean">
+      <div class="ai-result-box green" id="res-boolean-wrap">
+        <div class="ai-section-title" style="color:var(--accent);">⚡ Boolean String</div>
+        <div id="res-boolean" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);line-height:1.7;word-break:break-all;"></div>
+        <button class="copy-btn" style="margin-top:10px;" onclick="copyEl('res-boolean',this)">Copy</button>
+      </div>
+      <div class="ai-result-box blue" id="res-xray-wrap">
+        <div class="ai-section-title" style="color:var(--accent2);">🔍 Google X-Ray — LinkedIn</div>
+        <div id="res-xray" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent2);line-height:1.7;word-break:break-all;"></div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button class="copy-btn" onclick="copyEl('res-xray',this)">Copy</button>
+          <button class="copy-btn" style="color:var(--accent2);border-color:rgba(0,207,255,0.3);" onclick="openFromEl('res-xray')">Open ↗</button>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="ai-result-box" id="res-so-wrap">
+          <div class="ai-section-title" style="color:var(--warn);">📦 StackOverflow X-Ray</div>
+          <div id="res-so" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--warn);line-height:1.7;word-break:break-all;"></div>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button class="copy-btn" onclick="copyEl('res-so',this)">Copy</button>
+            <button class="copy-btn" style="color:var(--warn);border-color:rgba(255,179,64,0.3);" onclick="openFromEl('res-so')">Open ↗</button>
+          </div>
+        </div>
+        <div class="ai-result-box" id="res-gh-wrap">
+          <div class="ai-section-title" style="color:var(--ai);">🐙 GitHub X-Ray (via Google)</div><div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Opens Google search → Chrome Extension scrapes GitHub profiles → Export to Sheets</div>
+          <div id="res-gh" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ai);line-height:1.7;word-break:break-all;"></div>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button class="copy-btn" onclick="copyEl('res-gh',this)">Copy</button>
+            <button class="copy-btn" style="color:var(--ai);border-color:rgba(192,132,252,0.3);" onclick="openFromEl('res-gh')">Open ↗</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Target Companies -->
+    <div id="jdtab-companies" style="display:none;">
+      <div class="ai-result-box blue">
+        <div class="ai-section-title" style="color:var(--accent2);">🏢 Companies Likely Hiring for This Role</div>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:14px;">Based on the skills and role in your JD — companies known to hire this profile. Click any to add to your Boolean search.</p>
+        <div class="company-grid" id="res-companies"></div>
+      </div>
+      <div class="ai-result-box" style="border-left-color:var(--accent);">
+        <div class="ai-section-title" style="color:var(--accent);">💡 X-Ray These Companies</div>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:12px;">Auto-generated X-Ray targeting these specific companies on LinkedIn.</p>
+        <div id="res-company-xray" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);line-height:1.7;word-break:break-all;margin-bottom:10px;"></div>
+        <div style="display:flex;gap:8px;">
+          <button class="copy-btn" onclick="copyEl('res-company-xray',this)">Copy</button>
+          <button class="copy-btn" style="color:var(--accent2);border-color:rgba(0,207,255,0.3);" onclick="openFromEl('res-company-xray')">Open ↗</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interview Questions -->
+    <div id="jdtab-interview" style="display:none;">
+      <div class="ai-result-box" style="border-left-color:var(--warn);">
+        <div class="ai-section-title" style="color:var(--warn);">❓ Interview Questions for Recruiter Screening</div>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:14px;">Based on the JD — questions to ask candidates during your initial screening call.</p>
+        <div id="res-interview"></div>
+      </div>
+    </div>
+
+    <!-- Profile Review Checklist -->
+    <div id="jdtab-profile" style="display:none;">
+      <div class="ai-result-box" style="border-left-color:var(--accent);">
+        <div class="ai-section-title" style="color:var(--accent);">✅ What to Look For — Profile Review Checklist</div>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:14px;">Based on your JD — use this when reviewing real LinkedIn profiles from your search results.</p>
+        <div id="res-profiles"></div>
+      </div>
+      <div class="grid-2" style="margin-top:14px;">
+        <div class="ai-result-box" style="border-left-color:var(--green);margin-bottom:0;">
+          <div class="ai-section-title" style="color:var(--green);">✅ Green Flags — Strong Match</div>
+          <div id="res-green-flags"></div>
+        </div>
+        <div class="ai-result-box" style="border-left-color:var(--danger);margin-bottom:0;">
+          <div class="ai-section-title" style="color:var(--danger);">⚠️ Red Flags — Review Carefully</div>
+          <div id="res-red-flags"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /jd-results -->
+
+  <!-- Loading state -->
+  <div id="jd-loading" style="display:none;">
+    <div class="ai-loading">
+      <div class="ai-spinner"></div>
+      <span id="jd-loading-msg">Analyzing JD with Claude AI...</span>
+    </div>
+  </div>
+
+</div><!-- /panel-jd -->
+
 <!-- ══════════════════════════════
      CUSTOM ROLE MODAL
 ══════════════════════════════ -->
@@ -483,6 +682,38 @@ const veteranRoles = {
     skills: '"Leadership" OR "Strategy" OR "Consulting" OR "General Management" OR "P&L" OR "Business Transformation" OR "Change Management" OR "Corporate Training"'
   }
 };
+
+// ── LGBTQ+ TALENT ──────────────────────────────────────────────
+// Strategy: target ERG membership signals, LGBTQ+ orgs, and Pride@ patterns
+// These are specific enough to cut noise vs generic "Diversity/Inclusion" terms
+const lgbtqRoles = {
+  lgbtq_any: {
+    label: "LGBTQ+ — Any Role",
+    titles: '"DEI" OR "Diversity and Inclusion" OR "Pride Network" OR "LGBTQ" OR "ERG Lead" OR "Inclusion Lead" OR "Queer Affinity"',
+    skills: '"Pride@" OR "LGBTQ ERG" OR "Queer" OR "Trans Inclusion" OR "Humsafar" OR "Umang" OR "Out in Tech" OR "Gender Identity"'
+  },
+  lgbtq_dei: {
+    label: "LGBTQ+ — DEI / HR",
+    titles: '"Diversity" OR "Inclusion" OR "DEI" OR "DEIB" OR "Belonging" OR "Equity" OR "People and Culture" OR "Culture and Belonging"',
+    skills: '"LGBTQ+" OR "Queer Inclusion" OR "Trans Inclusion" OR "Pride Network" OR "ERG" OR "Gender Identity" OR "Humsafar" OR "Umang"'
+  },
+  lgbtq_tech: {
+    label: "LGBTQ+ — Technology",
+    titles: '"Software Engineer" OR "Product Manager" OR "Data Scientist" OR "Designer" OR "Engineering Manager" OR "Developer"',
+    skills: '"Pride@" OR "LGBTQ ERG" OR "Out in Tech" OR "Lesbians Who Tech" OR "Trans*H4CK" OR "Queer" OR "LGBTQ inclusion"'
+  },
+  lgbtq_community: {
+    label: "LGBTQ+ — Community / Advocacy",
+    titles: '"Community Manager" OR "Program Manager" OR "Policy" OR "Advocacy" OR "NGO" OR "Social Impact" OR "Outreach"',
+    skills: '"LGBTQ" OR "Queer" OR "Trans" OR "Humsafar Trust" OR "Umang" OR "Yaariyan" OR "Pride India" OR "The Queer Muslim Project"'
+  },
+  lgbtq_marketing: {
+    label: "LGBTQ+ — Marketing / Comms",
+    titles: '"Marketing" OR "Brand Manager" OR "Communications" OR "PR" OR "Content Creator" OR "Social Media Manager"',
+    skills: '"Inclusive Marketing" OR "Pride Campaign" OR "LGBTQ Marketing" OR "Queer Representation" OR "Diversity Marketing" OR "Allyship"'
+  }
+};
+
 const clusters = {
   faang:  '"Google" OR "Amazon" OR "Microsoft" OR "Meta" OR "Apple"',
   unicorn:'"Flipkart" OR "Swiggy" OR "Razorpay" OR "Meesho" OR "Zomato"',
@@ -505,9 +736,14 @@ const educationMap = {
 // ══════════════════════════════════════════════
 function switchTab(name, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => {
+    p.classList.remove('active');
+    p.style.display = 'none';
+  });
   el.classList.add('active');
-  document.getElementById('panel-' + name).classList.add('active');
+  const panel = document.getElementById('panel-' + name);
+  panel.classList.add('active');
+  panel.style.display = 'block';
 }
 
 // ══════════════════════════════════════════════
@@ -595,6 +831,8 @@ function populateRoles() {
   if (category === 'tech') roles = techRoles;
   else if (category === 'sales') roles = salesRoles;
   else if (category === 'veterans') roles = veteranRoles;
+  else if (category === 'lgbtq') roles = lgbtqRoles;
+
   else if (category === 'custom') {
     getCustomRoles().forEach(r => { roles[r.key] = r; });
   }
@@ -611,6 +849,7 @@ function getRoleData(category, key) {
   if (category === 'tech') return techRoles[key];
   if (category === 'sales') return salesRoles[key];
   if (category === 'veterans') return veteranRoles[key];
+  if (category === 'lgbtq') return lgbtqRoles[key];
   if (category === 'custom') return getCustomRoles().find(r => r.key === key);
   return null;
 }
@@ -718,12 +957,15 @@ function buildSOQuery(rd, mandatory) {
 }
 
 function buildGHQuery(rd, mandatory, loc) {
+  // Target individual GitHub profile pages
+  // -inurl excludes org pages, repo pages, gist pages, follower list pages
   const skillMatch = rd.skills.match(/"([^"]+)"/g) || [];
-  const topSkills = skillMatch.slice(0, 3).map(s => s.replace(/"/g, '')).join(' ');
+  const topSkills = skillMatch.slice(0, 3).map(s => s).join(' OR ');
   const mandatoryMatch = mandatory ? mandatory.match(/"([^"]+)"/g) || [] : [];
-  const mandTerms = mandatoryMatch.slice(0, 2).map(s => s.replace(/"/g, '')).join(' ');
-  const locStr = loc ? `location:"${loc.split('/')[0].trim()}"` : '';
-  return `${topSkills} ${mandTerms} ${locStr}`.trim();
+  const mandTerms = mandatoryMatch.slice(0, 2).join(' OR ');
+  const combined = [topSkills, mandTerms].filter(Boolean).join(' OR ');
+  const indiaLoc = '"India" OR "Bangalore" OR "Mumbai" OR "Delhi" OR "Hyderabad" OR "Pune" OR "Chennai"';
+  return `site:github.com -inurl:orgs -inurl:repos -inurl:gists -inurl:followers -inurl:blob -inurl:tree (${indiaLoc}) (${combined || topSkills})`;
 }
 
 function openLinkedIn() {
@@ -751,8 +993,8 @@ function openStackOverflow() {
 function openGitHub() {
   const q = document.getElementById('gh-query').value;
   if (!q) { alert('Generate a query first.'); return; }
-  // GitHub people search
-  window.open('https://github.com/search?type=users&q=' + encodeURIComponent(q), '_blank');
+  // Open via Google so Chrome Extension can scrape profiles and export to Sheets
+  window.open('https://www.google.com/search?q=' + encodeURIComponent(q), '_blank');
 }
 
 
@@ -782,6 +1024,359 @@ function hideStatus(id) {
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+// ══════════════════════════════════════════════════════════════
+// JD ANALYZER — AI POWERED
+// ══════════════════════════════════════════════════════════════
+
+// Company intelligence database — curated by role type
+const companyDB = {
+  devops:    ["Flipkart","Swiggy","Zomato","CRED","Razorpay","PhonePe","Meesho","Groww","Zepto","Dream11","Dunzo","Ola","Nykaa","Sharechat","Freshworks","Zoho","Chargebee","Postman","Druva","Whatfix","Infosys","Wipro","TCS","Thoughtworks","Publicis Sapient","Nagarro"],
+  sre:       ["Google","Microsoft","Amazon","Meta","Flipkart","Swiggy","CRED","Razorpay","PhonePe","Meesho","Groww","Zepto","Ola","Nykaa","Sharechat","Freshworks","Zoho","Chargebee","Postman","Druva","Infosys","Wipro","TCS"],
+  data:      ["Walmart Labs","Amazon","Flipkart","Swiggy","Zomato","CRED","Razorpay","PhonePe","Meesho","Groww","Zepto","Dream11","Ola","MakeMyTrip","PolicyBazaar","PayTM","Juspay","Slice","Jupiter","Fi Money","Licious","HealthKart","Nykaa","Sharechat"],
+  frontend:  ["Flipkart","Swiggy","Zomato","CRED","Razorpay","PhonePe","Meesho","Groww","Zepto","Dream11","Ola","Nykaa","Sharechat","Freshworks","Zoho","Chargebee","Postman","Druva","Whatfix","BrowserStack","Wingify","CleverTap","MoEngage","WebEngage"],
+  backend:   ["Flipkart","Swiggy","Zomato","CRED","Razorpay","PhonePe","Meesho","Groww","Zepto","Dream11","Ola","Nykaa","Sharechat","Freshworks","Zoho","Chargebee","Postman","Druva","Whatfix","BrowserStack","Wingify","CleverTap","MoEngage"],
+  fullstack: ["Flipkart","Swiggy","Zomato","CRED","Razorpay","PhonePe","Meesho","Groww","Zepto","Dream11","Ola","Nykaa","Sharechat","Freshworks","Zoho","Chargebee","Postman","Druva","Whatfix","BrowserStack","Wingify"],
+  mobile:    ["Flipkart","Swiggy","Zomato","CRED","Razorpay","PhonePe","Meesho","Groww","Zepto","Dream11","Ola","Nykaa","Sharechat","Freshworks","Zoho","MakeMyTrip","PolicyBazaar","PayTM","Juspay","Slice","Jupiter","Fi Money"],
+  ml:        ["Google","Microsoft","Amazon","Meta","Flipkart","Swiggy","Zomato","CRED","Razorpay","PhonePe","Meesho","Groww","Zepto","Dream11","Ola","MakeMyTrip","PolicyBazaar","PayTM","Juspay","Slice","Jupiter","Fi Money","Licious","HealthKart"],
+  product:   ["Flipkart","Swiggy","Zomato","CRED","Razorpay","PhonePe","Meesho","Groww","Zepto","Dream11","Ola","Nykaa","Sharechat","Freshworks","Zoho","Chargebee","Postman","Druva","Whatfix","BrowserStack","Wingify","CleverTap","MoEngage","WebEngage","MakeMyTrip","PolicyBazaar","PayTM"],
+  security:  ["Wipro","Infosys","TCS","HCL","Tech Mahindra","Palo Alto Networks","Crowdstrike","McAfee","Securonix","Druva","Rubrik","Zscaler","Qualys","Rapid7","Darktrace","Sophos","Cybereason"],
+  cloud:     ["AWS","Google Cloud","Microsoft Azure","Wipro","Infosys","TCS","HCL","Tech Mahindra","Thoughtworks","Publicis Sapient","Nagarro","Zensar","Mphasis","Hexaware","LTIMindtree","Coforge"],
+  sales:     ["Salesforce","SAP","Oracle","IBM","Zoho","Freshworks","HubSpot","Leadsquared","Kapture CRM","CleverTap","MoEngage","WebEngage","Netcore","Exotel","Ozonetel","Sprinklr"],
+  default:   ["Flipkart","Swiggy","Zomato","CRED","Razorpay","PhonePe","Meesho","Groww","Zepto","Dream11","Ola","Nykaa","Sharechat","Freshworks","Zoho","Infosys","Wipro","TCS","Thoughtworks","Publicis Sapient"]
+};
+
+function detectRoleType(jdText) {
+  const t = jdText.toLowerCase();
+  if (t.includes('devops') || t.includes('ci/cd') || t.includes('terraform') || t.includes('ansible')) return 'devops';
+  if (t.includes('site reliability') || t.includes('sre') || t.includes('on-call') || t.includes('observability')) return 'sre';
+  if (t.includes('machine learning') || t.includes('deep learning') || t.includes('nlp') || t.includes('llm') || t.includes('ai/ml') || t.includes('data scientist')) return 'ml';
+  if (t.includes('data engineer') || t.includes('data analyst') || t.includes('spark') || t.includes('hadoop') || t.includes('dbt') || t.includes('airflow')) return 'data';
+  if (t.includes('frontend') || t.includes('front-end') || t.includes('react') || t.includes('vue') || t.includes('angular') || t.includes('ui developer')) return 'frontend';
+  if (t.includes('mobile') || t.includes('android') || t.includes('ios') || t.includes('flutter') || t.includes('react native') || t.includes('swift') || t.includes('kotlin')) return 'mobile';
+  if (t.includes('full stack') || t.includes('fullstack') || t.includes('full-stack')) return 'fullstack';
+  if (t.includes('backend') || t.includes('back-end') || t.includes('api') || t.includes('microservices') || t.includes('node.js') || t.includes('java') || t.includes('python') || t.includes('golang') || t.includes('go lang')) return 'backend';
+  if (t.includes('security') || t.includes('cybersecurity') || t.includes('penetration') || t.includes('siem') || t.includes('soc analyst') || t.includes('vapt')) return 'security';
+  if (t.includes('cloud') || t.includes('aws') || t.includes('azure') || t.includes('gcp') || t.includes('google cloud')) return 'cloud';
+  if (t.includes('product manager') || t.includes('product management') || t.includes('product owner') || t.includes('roadmap')) return 'product';
+  if (t.includes('sales') || t.includes('business development') || t.includes('account executive') || t.includes('revenue')) return 'sales';
+  return 'default';
+}
+
+function getCompanies(jdText) {
+  const roleType = detectRoleType(jdText);
+  return companyDB[roleType] || companyDB['default'];
+}
+
+let selectedCompanies = [];
+
+function renderCompanyChips(companies) {
+  selectedCompanies = companies.slice(0, 12);
+  const el = document.getElementById('res-companies');
+  el.innerHTML = '';
+  companies.slice(0, 20).forEach(c => {
+    const chip = document.createElement('span');
+    chip.className = 'company-chip' + (selectedCompanies.includes(c) ? ' active' : '');
+    chip.style.cssText = selectedCompanies.includes(c)
+      ? 'background:rgba(0,207,255,0.15);border-color:rgba(0,207,255,0.5);'
+      : '';
+    chip.textContent = c;
+    chip.onclick = () => toggleCompany(c, chip);
+    el.appendChild(chip);
+  });
+  updateCompanyXray();
+}
+
+function toggleCompany(name, el) {
+  if (selectedCompanies.includes(name)) {
+    selectedCompanies = selectedCompanies.filter(c => c !== name);
+    el.style.cssText = '';
+  } else {
+    selectedCompanies.push(name);
+    el.style.cssText = 'background:rgba(0,207,255,0.15);border-color:rgba(0,207,255,0.5);';
+  }
+  updateCompanyXray();
+}
+
+function updateCompanyXray() {
+  if (!selectedCompanies.length) {
+    document.getElementById('res-company-xray').textContent = 'Select companies above to generate X-Ray string.';
+    return;
+  }
+  const companiesQ = selectedCompanies.map(c => `"${c}"`).join(' OR ');
+  const roleType = detectRoleType(document.getElementById('jd-input').value);
+  const roleTitles = {
+    devops: '"DevOps" OR "Platform Engineer" OR "Infrastructure"',
+    sre: '"Site Reliability" OR "SRE" OR "Platform Engineer"',
+    data: '"Data Engineer" OR "Data Scientist" OR "Analytics"',
+    frontend: '"Frontend" OR "UI Developer" OR "React Developer"',
+    backend: '"Backend Engineer" OR "Software Engineer" OR "API Developer"',
+    fullstack: '"Full Stack" OR "Software Engineer" OR "Developer"',
+    mobile: '"Mobile Developer" OR "Android" OR "iOS" OR "Flutter"',
+    ml: '"Machine Learning" OR "Data Scientist" OR "AI Engineer" OR "ML Engineer"',
+    product: '"Product Manager" OR "Product Owner" OR "PM"',
+    security: '"Security Engineer" OR "Cybersecurity" OR "SOC Analyst"',
+    cloud: '"Cloud Engineer" OR "Cloud Architect" OR "DevOps"',
+    sales: '"Sales" OR "Business Development" OR "Account Executive"',
+    default: '"Engineer" OR "Developer" OR "Manager"'
+  };
+  const titles = roleTitles[roleType] || roleTitles.default;
+  const xray = `site:linkedin.com/in (${titles}) AND (${companiesQ})`;
+  document.getElementById('res-company-xray').textContent = xray;
+}
+
+// ── Main JD Analysis function ──────────────────────────────────
+async function analyzeJD() {
+  const jd = document.getElementById('jd-input').value.trim();
+  if (!jd || jd.length < 50) {
+    showJdError('Please paste a complete Job Description (at least 50 characters).');
+    return;
+  }
+  clearJdError();
+
+  // Show loading
+  document.getElementById('jd-loading').style.display = 'block';
+  document.getElementById('jd-results').style.display = 'none';
+  document.getElementById('jd-loading-msg').textContent = 'Analyzing JD with Claude AI...';
+
+  try {
+    // Step 1: Extract skills/titles and generate boolean strings
+    document.getElementById('jd-loading-msg').textContent = 'Extracting skills and generating search strings...';
+
+    const booleanPrompt = `You are an expert technical recruiter and Boolean search specialist.
+
+Analyze this Job Description and return ONLY a JSON object (no markdown, no explanation):
+
+{
+  "jobTitle": "extracted job title",
+  "titles": ["list", "of", "3-6", "relevant", "job", "titles"],
+  "mustSkills": ["top", "4-6", "must-have", "skills"],
+  "niceSkills": ["top", "3-4", "good-to-have", "skills"],
+  "expRange": "e.g. 3-7 years",
+  "booleanString": "full LinkedIn boolean search string using titles AND skills",
+  "xrayLinkedIn": "site:linkedin.com/in boolean string",
+  "xraySO": "site:stackoverflow.com/users boolean string with top tech skills only",
+  "xrayGitHub": "GitHub people search URL string — use this exact format: site:github.com/in OR just use GitHub people search: the string should target user profile pages NOT repos. Use format: site:github.com (\"followers\" OR \"repositories\") AND (skill1 OR skill2) — keep it short, max 3 skills"
+}
+
+JD:
+${jd.substring(0, 2000)}`;
+
+    const r1 = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: booleanPrompt }]
+      })
+    });
+    const d1 = await r1.json();
+    const raw1 = d1.content?.[0]?.text || '{}';
+    const clean1 = raw1.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean1);
+
+    // Populate boolean results
+    document.getElementById('res-boolean').textContent = parsed.booleanString || '—';
+    document.getElementById('res-xray').textContent    = parsed.xrayLinkedIn  || '—';
+    document.getElementById('res-so').textContent      = parsed.xraySO        || '—';
+
+    // GitHub X-Ray — target INDIVIDUAL profile pages only
+    // Key insight: individual profile URLs = github.com/username (no sub-path)
+    // Exclude: /orgs/ /repos/ /followers /gists /blob /tree /commit
+    const ghSkillsArr = (parsed.mustSkills || []).slice(0, 3).filter(s => s && s.trim());
+    const ghSkillsStr = ghSkillsArr.length > 0
+      ? ghSkillsArr.map(s => '"' + s.trim() + '"').join(' OR ')
+      : (parsed.titles || []).slice(0,2).map(s => '"' + s.trim() + '"').join(' OR ');
+    const ghQuery = 'site:github.com -inurl:orgs -inurl:repos -inurl:gists -inurl:followers -inurl:blob -inurl:tree ("India" OR "Bangalore" OR "Mumbai" OR "Hyderabad" OR "Pune" OR "Chennai" OR "Delhi") (' + ghSkillsStr + ')';
+    console.log('GitHub query:', ghQuery);
+    document.getElementById('res-gh').textContent = ghQuery;
+
+    // Step 2: Interview Questions
+    document.getElementById('jd-loading-msg').textContent = 'Generating interview questions...';
+
+    const iqPrompt = `You are a senior technical recruiter. Based on this Job Description, generate exactly 8 screening questions a recruiter should ask a candidate on a first call.
+
+Mix these types: 2 experience/background, 2 technical depth, 2 behavioural, 1 motivation, 1 culture/work-style.
+
+Return ONLY a JSON array (no markdown):
+[
+  {"type": "Experience", "question": "..."},
+  {"type": "Technical", "question": "..."}
+]
+
+JD: ${jd.substring(0, 1500)}`;
+
+    const r2 = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: iqPrompt }]
+      })
+    });
+    const d2 = await r2.json();
+    const raw2 = d2.content?.[0]?.text || '[]';
+    const clean2 = raw2.replace(/```json|```/g, '').trim();
+    const questions = JSON.parse(clean2);
+
+    const iqEl = document.getElementById('res-interview');
+    iqEl.innerHTML = questions.map(q => `
+      <div class="interview-q">
+        <strong>${q.type}</strong>
+        ${q.question}
+      </div>`).join('');
+
+    // Step 3: Profile Review Checklist
+    document.getElementById('jd-loading-msg').textContent = 'Building profile review checklist...';
+
+    const profilePrompt = `You are a senior technical recruiter in India. Based on this JD, create a practical profile review checklist for recruiters to use when reviewing real LinkedIn profiles.
+
+Return ONLY a JSON object (no markdown):
+{
+  "checklistSections": [
+    {
+      "section": "Headline & Current Role",
+      "whatToCheck": "What the recruiter should look at in this section",
+      "lookFor": "Specific things that indicate a strong match"
+    },
+    {
+      "section": "Experience",
+      "whatToCheck": "...",
+      "lookFor": "..."
+    },
+    {
+      "section": "Skills Section",
+      "whatToCheck": "...",
+      "lookFor": "..."
+    },
+    {
+      "section": "Education",
+      "whatToCheck": "...",
+      "lookFor": "..."
+    },
+    {
+      "section": "Activity & Posts",
+      "whatToCheck": "...",
+      "lookFor": "..."
+    }
+  ],
+  "greenFlags": [
+    "Specific positive signal 1",
+    "Specific positive signal 2",
+    "Specific positive signal 3",
+    "Specific positive signal 4",
+    "Specific positive signal 5"
+  ],
+  "redFlags": [
+    "Specific concern 1",
+    "Specific concern 2",
+    "Specific concern 3",
+    "Specific concern 4",
+    "Specific concern 5"
+  ]
+}
+
+JD: ${jd.substring(0, 1200)}`;
+
+    const r3 = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1200,
+        messages: [{ role: 'user', content: profilePrompt }]
+      })
+    });
+    const d3 = await r3.json();
+    const raw3 = d3.content?.[0]?.text || '{}';
+    const clean3 = raw3.replace(/```json|```/g, '').trim();
+    const checklist = JSON.parse(clean3);
+
+    // Render checklist sections
+    const profEl = document.getElementById('res-profiles');
+    profEl.innerHTML = (checklist.checklistSections || []).map(sec => `
+      <div style="padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:10px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">
+          📋 ${sec.section}
+        </div>
+        <div style="font-size:11.5px;color:var(--muted);margin-bottom:3px;">${sec.whatToCheck}</div>
+        <div style="font-size:11.5px;color:var(--text);">👉 ${sec.lookFor}</div>
+      </div>`).join('');
+
+    // Render green flags
+    const greenEl = document.getElementById('res-green-flags');
+    greenEl.innerHTML = (checklist.greenFlags || []).map(f =>
+      `<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;color:var(--text);">✅ ${f}</div>`
+    ).join('');
+
+    // Render red flags
+    const redEl = document.getElementById('res-red-flags');
+    redEl.innerHTML = (checklist.redFlags || []).map(f =>
+      `<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;color:var(--text);">⚠️ ${f}</div>`
+    ).join('');
+
+    // Step 4: Companies (no API needed — use our DB)
+    const companies = getCompanies(jd);
+    renderCompanyChips(companies);
+
+    // Show results
+    document.getElementById('jd-loading').style.display = 'none';
+    document.getElementById('jd-results').style.display = 'block';
+    switchJdTab('boolean');
+
+  } catch(err) {
+    document.getElementById('jd-loading').style.display = 'none';
+    showJdError('Analysis failed: ' + (err.message || 'Please try again.') + ' — Make sure you are connected to the internet.');
+    console.error(err);
+  }
+}
+
+function switchJdTab(tab) {
+  document.querySelectorAll('.jd-tab').forEach((b,i) => {
+    const tabs = ['boolean','companies','interview','profile'];
+    b.classList.toggle('active', tabs[i] === tab);
+  });
+  ['boolean','companies','interview','profile'].forEach(t => {
+    const el = document.getElementById('jdtab-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+}
+
+function clearJD() {
+  document.getElementById('jd-input').value = '';
+  document.getElementById('jd-results').style.display = 'none';
+  document.getElementById('jd-loading').style.display = 'none';
+  clearJdError();
+  selectedCompanies = [];
+}
+
+function showJdError(msg) {
+  const el = document.getElementById('jd-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function clearJdError() {
+  document.getElementById('jd-error').style.display = 'none';
+}
+
+function copyEl(id, btn) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = orig, 1800);
+  });
+}
+
+function openFromEl(id) {
+  const q = document.getElementById(id).textContent.trim();
+  if (!q || q === '—') return;
+  // ALL platforms open via Google so Chrome Extension can scrape them
+  window.open('https://www.google.com/search?q=' + encodeURIComponent(q), '_blank');
+}
+
 </script>
 </body>
 </html>
