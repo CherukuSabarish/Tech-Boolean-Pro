@@ -481,6 +481,26 @@ textarea.form-area:focus{border-color:var(--accent);}
 
 Example: We are looking for a Senior DevOps Engineer with 5+ years experience in Kubernetes, Terraform, AWS or GCP. The candidate should have strong scripting skills in Python or Bash, experience with CI/CD pipelines, and exposure to observability tools like Datadog or Prometheus. Prior experience in a fast-paced product startup is preferred..."></textarea>
 
+    <div style="margin-top:12px;margin-bottom:10px;">
+      <!-- API KEY FIELD — STEP 1 -->
+      <div style="background:rgba(192,132,252,0.08);border:1.5px solid rgba(192,132,252,0.4);border-radius:10px;padding:14px 16px;margin-bottom:4px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:18px;">🔑</span>
+          <div>
+            <div style="font-size:11.5px;font-weight:700;color:var(--ai);">STEP 1 — Enter your Anthropic API Key</div>
+            <div style="font-size:10px;color:var(--muted);">Get a free key at <strong style="color:var(--ai);">console.anthropic.com</strong> → API Keys → Create Key</div>
+          </div>
+        </div>
+        <input id="api-key-input" type="password"
+          placeholder="Paste your key here → sk-ant-api03-xxxxxxxxxxxx"
+          style="width:100%;background:var(--surface2);border:1px solid rgba(192,132,252,0.5);border-radius:8px;color:var(--text);font-family:monospace;font-size:12px;padding:10px 14px;outline:none;box-sizing:border-box;"
+          oninput="localStorage.setItem('tt_api_key', this.value); this.style.borderColor = this.value.startsWith('sk-ant') ? 'var(--accent)' : 'rgba(192,132,252,0.5)';"
+        />
+        <div style="font-size:10px;color:var(--muted);margin-top:6px;">🔒 Saved in your browser only — never shared anywhere else</div>
+      </div>
+      <!-- JD FIELD — STEP 2 -->
+      <div style="font-size:11px;font-weight:700;color:var(--accent);margin:14px 0 6px;">📋 STEP 2 — Paste your Job Description below</div>
+    </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
       <button class="btn btn-primary" onclick="analyzeJD()">🧠 Analyze JD</button>
       <button class="btn btn-ghost" onclick="clearJD()">✕ Clear</button>
@@ -1133,6 +1153,12 @@ async function analyzeJD() {
     showJdError('Please paste a complete Job Description (at least 50 characters).');
     return;
   }
+
+  const apiKey = (document.getElementById('api-key-input')?.value || localStorage.getItem('tt_api_key') || '').trim();
+  if (!apiKey || !apiKey.startsWith('sk-ant')) {
+    showJdError('Please enter your Anthropic API key above. Get a free key at console.anthropic.com');
+    return;
+  }
   clearJdError();
 
   // Show loading
@@ -1165,7 +1191,12 @@ ${jd.substring(0, 2000)}`;
 
     const r1 = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'anthropic-version': '2023-06-01'
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 2000,
@@ -1215,7 +1246,12 @@ JD: ${jd.substring(0, 1500)}`;
 
     const r2 = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'anthropic-version': '2023-06-01'
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1500,
@@ -1289,7 +1325,12 @@ JD: ${jd.substring(0, 1200)}`;
 
     const r3 = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'anthropic-version': '2023-06-01'
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1500,
@@ -1365,6 +1406,15 @@ function clearJD() {
   clearJdError();
   selectedCompanies = [];
 }
+
+// Load saved API key from localStorage
+(function loadSavedKey() {
+  const saved = localStorage.getItem('tt_api_key');
+  if (saved) {
+    const el = document.getElementById('api-key-input');
+    if (el) el.value = saved;
+  }
+})();
 
 function showJdError(msg) {
   const el = document.getElementById('jd-error');
