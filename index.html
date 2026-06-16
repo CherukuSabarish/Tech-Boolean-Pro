@@ -1008,22 +1008,21 @@ function generate() {
     const nameBatch2 = 'Riya OR Sonal OR Tanvi OR Akanksha OR Rhea OR Avni OR Anika OR Trisha OR Khushi OR Isha OR Ruchi OR Pallavi OR Sanya OR Nikita OR Preeti OR Arushi OR Srishti OR Devanshi OR Navya OR Sanvi OR Bhavna OR Lavanya OR Aarohi OR Aayushi OR Nidhi';
     const nameBatch3 = 'Aarti OR Aasha OR Aishwarya OR Akansha OR Akshara OR Alisha OR Amisha OR Amrita OR Anushka OR Aparna OR Aruna OR Asha OR Asmita OR Aswini OR Athira OR Avanti OR Ayesha OR Bhavika OR Chetna OR Damini OR Deepali OR Deepti OR Disha OR Ekta OR Falak';
 
-    // KEY FIX: Use inurl: so the name MUST appear in the LinkedIn profile URL
-    // LinkedIn URLs are: linkedin.com/in/priya-sharma-123 — name is always in URL
-    // This prevents male profiles slipping through via skill keyword matches
+    // PROVEN APPROACH — same as your own example:
+    // site:linkedin.com/in "name" (role) (location)
+    // Quoted name must appear on the profile page — much cleaner than inurl
+    // Run 3 batches separately — each has different names
 
-    // Build inurl name strings — each name as separate inurl: condition
-    const batch1Names = ['aditi','anjali','priya','sneha','pooja','deepika','neha','shreya','divya','kavya','nisha','ritika','ankita','meghna','simran','sakshi','ananya','tanya','shruti','swati'];
-    const batch2Names = ['riya','sonal','tanvi','akanksha','rhea','avni','anika','trisha','khushi','isha','ruchi','pallavi','sanya','nikita','preeti','arushi','navya','sanvi','bhavna','lavanya'];
-    const batch3Names = ['aarti','aishwarya','akansha','amisha','amrita','anushka','aparna','asha','asmita','disha','ekta','falak','gauri','geetanjali','hema','isha','jyoti','kajal','kalpana','kavita'];
+    const role = topTitles || topSkills;
 
-    const inurlBatch1 = batch1Names.map(n => `inurl:${n}`).join(' OR ');
-    const inurlBatch2 = batch2Names.map(n => `inurl:${n}`).join(' OR ');
-    const inurlBatch3 = batch3Names.map(n => `inurl:${n}`).join(' OR ');
+    // Batch 1 — top 6 most common names (keep query short for Google)
+    const femaleXray  = `site:linkedin.com/in ("Priya" OR "Anjali" OR "Sneha" OR "Pooja" OR "Divya" OR "Neha" OR "Aditi" OR "Ananya" OR "Shreya" OR "Kavya") (${role}) (${indiaLoc})`;
 
-    const femaleXray  = `site:linkedin.com/in (${inurlBatch1}) (${topTitles || topSkills}) (${indiaLoc})`;
-    const femaleXray2 = `site:linkedin.com/in (${inurlBatch2}) (${topTitles || topSkills}) (${indiaLoc})`;
-    const femaleXray3 = `site:linkedin.com/in (${inurlBatch3}) (${topTitles || topSkills}) (${indiaLoc})`;
+    // Batch 2
+    const femaleXray2 = `site:linkedin.com/in ("Simran" OR "Sakshi" OR "Ritika" OR "Ankita" OR "Shruti" OR "Swati" OR "Mansi" OR "Shweta" OR "Tanya" OR "Nidhi") (${role}) (${indiaLoc})`;
+
+    // Batch 3
+    const femaleXray3 = `site:linkedin.com/in ("Deepika" OR "Isha" OR "Nikita" OR "Pallavi" OR "Preeti" OR "Riya" OR "Tanvi" OR "Navya" OR "Bhavna" OR "Lavanya") (${role}) (${indiaLoc})`;
 
     // Full boolean for copy
     const femaleBoolean = `(${femaleNamesBoolean}) AND (${rd.titles}) AND (${rd.skills}) AND (${indiaLoc})`;
