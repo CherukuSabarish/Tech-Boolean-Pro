@@ -1,3 +1,36 @@
+<!--
+  ████████╗ █████╗ ██╗     ███████╗███╗   ██╗████████╗████████╗██████╗  █████╗  ██████╗███████╗
+  ╚══██╔══╝██╔══██╗██║     ██╔════╝████╗  ██║╚══██╔══╝╚══██╔══╝██╔══██╗██╔══██╗██╔════╝██╔════╝
+     ██║   ███████║██║     █████╗  ██╔██╗ ██║   ██║      ██║   ██████╔╝███████║██║     █████╗
+     ██║   ██╔══██║██║     ██╔══╝  ██║╚██╗██║   ██║      ██║   ██╔══██╗██╔══██║██║     ██╔══╝
+     ██║   ██║  ██║███████╗███████╗██║ ╚████║   ██║      ██║   ██║  ██║██║  ██║╚██████╗███████╗
+     ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═══╝   ╚═╝      ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝
+
+  VERSION : v6 FINAL
+  DATE    : June 2026
+  BUILT WITH : Claude (Anthropic)
+
+  ── FEATURE CHECKLIST (DO NOT BREAK) ──────────────────────────────────────────
+  ✅ Query Builder — Tech, Sales, Veterans, Freshers, Custom Roles
+  ✅ 4-Platform output — LinkedIn, Google X-Ray, StackOverflow, GitHub
+  ✅ Mandatory Keywords — AND / OR / Custom boolean logic
+  ✅ Female Filter — 500+ Indian female names, 3 X-Ray batches
+  ✅ Freshers — Year × Tier × Stream × Custom College (dynamic, no hardcoded years)
+  ✅ Company Clusters — FAANG, Unicorns, MNC, Fintech, Startups, EdTech, E-Comm
+  ✅ JD Analyzer — Boolean, Target Companies, Interview Questions, Profile Checklist
+  ✅ JD Role Detection — Scoring system (Full Stack ≠ DevOps)
+  ✅ GitHub X-Ray — "block or report user" signal for profile pages
+  ✅ India Location — locked in all searches
+  ✅ Sheet Protection — setupProtections() in AppsScript
+  ✅ Spell Corrections — vetran, fullstacker, tire1 etc.
+  ✅ Anthropic API — x-api-key + dangerous-direct-browser-access headers
+
+  ── UPGRADE RULES ──────────────────────────────────────────────────────────────
+  NEVER edit this file directly for upgrades.
+  ALWAYS copy this file → rename to index_v7.html → make changes there.
+  Run health check before saving any new version.
+  ───────────────────────────────────────────────────────────────────────────────
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -317,6 +350,7 @@ textarea.form-area:focus{border-color:var(--accent);}
         <option value="tech">Technology</option>
         <option value="sales">Sales</option>
         <option value="veterans">🎖 Veterans (Indian Defence)</option>
+        <option value="freshers">🎓 Freshers (College Hiring)</option>
         <option value="custom">⭐ My Custom Roles</option>
       </select>
 
@@ -409,6 +443,90 @@ textarea.form-area:focus{border-color:var(--accent);}
       </div>
     </div>
     <div id="mandatory-preview" style="margin-top:10px;font-size:11px;color:var(--accent2);font-family:'JetBrains Mono',monospace;background:var(--surface2);border:1px solid rgba(0,207,255,0.2);border-radius:7px;padding:8px 12px;display:none;"></div>
+  </div>
+
+  <!-- ── FRESHER FILTER (shown only for Freshers category) ── -->
+  <div id="fresher-panel" class="card" style="display:none;margin-bottom:16px;">
+    <div class="card-head">
+      <div class="card-dot" style="background:var(--accent2);box-shadow:0 0 6px var(--accent2);"></div>
+      <div class="card-title" style="color:var(--accent2);">🎓 Fresher Filters</div>
+      <span style="margin-left:auto;font-size:10px;color:var(--muted);">Year · Tier · Stream · College</span>
+    </div>
+
+    <div class="grid-2" style="gap:12px;margin-bottom:14px;">
+      <!-- Passout Year -->
+      <div>
+        <label>Passout Year</label>
+        <select id="fresher-year" onchange="buildFresherQuery()">
+          <option value="">— Select Year —</option>
+          <option value="2027">2027</option>
+          <option value="2026" selected>2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+        </select>
+      </div>
+
+      <!-- College Tier -->
+      <div>
+        <label>College Tier</label>
+        <select id="fresher-tier" onchange="onFresherTierChange()">
+          <option value="">— Select Tier —</option>
+          <option value="tier1">Tier 1 — IIT / BITS / NIT / IIIT / IISc</option>
+          <option value="tier2">Tier 2 — VIT / SRM / Manipal / PES / RV</option>
+          <option value="tier3">Tier 3 — State / Affiliated Universities</option>
+          <option value="custom">✏️ Add College / University manually</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Custom College Input (shown when custom tier selected) -->
+    <div id="fresher-custom-college-wrap" style="display:none;margin-bottom:14px;">
+      <label>College / University Name</label>
+      <input id="fresher-custom-college" type="text"
+        placeholder='e.g. Manipal, VIT, Anna University, JNTU...'
+        oninput="buildFresherQuery()"
+      />
+      <div style="font-size:10px;color:var(--muted);margin-top:-10px;">
+        Type one or multiple colleges separated by commas
+      </div>
+    </div>
+
+    <div class="grid-2" style="gap:12px;margin-bottom:14px;">
+      <!-- Stream / Degree -->
+      <div>
+        <label>Stream / Degree</label>
+        <select id="fresher-stream" onchange="buildFresherQuery()">
+          <option value="any">Any Degree</option>
+          <option value="btech_cs">B.Tech — Computer Science / IT</option>
+          <option value="btech_ece">B.Tech — Electronics / ECE / EEE</option>
+          <option value="btech_mech">B.Tech — Mechanical</option>
+          <option value="btech_civil">B.Tech — Civil</option>
+          <option value="mtech">M.Tech / ME</option>
+          <option value="mba">MBA</option>
+          <option value="mca">MCA / M.Sc CS</option>
+          <option value="bsc">B.Sc — CS / IT / Maths</option>
+        </select>
+      </div>
+
+      <!-- Location -->
+      <div>
+        <label>Preferred Location</label>
+        <select id="fresher-location" onchange="buildFresherQuery()">
+          <option value="india">Anywhere in India</option>
+          <option value="bangalore">Bangalore</option>
+          <option value="mumbai">Mumbai</option>
+          <option value="delhi">Delhi / NCR</option>
+          <option value="hyderabad">Hyderabad</option>
+          <option value="pune">Pune</option>
+          <option value="chennai">Chennai</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Live Preview -->
+    <div id="fresher-preview" style="font-size:10.5px;color:var(--accent2);font-family:'JetBrains Mono',monospace;background:var(--surface2);border:1px solid rgba(0,207,255,0.2);border-radius:7px;padding:8px 12px;display:none;word-break:break-all;line-height:1.6;"></div>
   </div>
 
   <!-- Action Buttons -->
@@ -744,6 +862,38 @@ const lgbtqRoles = {
   }
 };
 
+
+// ── FRESHERS — Dynamic (Year + Tier + Stream + Custom College) ──
+// Single placeholder role — actual query built dynamically by buildFresherQuery()
+const fresherRoles = {
+  fresher: {
+    label: "🎓 Configure below ↓",
+    titles: '',
+    skills: ''
+  }
+};
+
+// College tier definitions
+const collegeTiers = {
+  tier1: { label: 'Tier 1 — IIT / BITS / NIT / IIIT / IISc', colleges: '"IIT" OR "IIT Bombay" OR "IIT Delhi" OR "IIT Madras" OR "IIT Kharagpur" OR "IIT Hyderabad" OR "IIT Kanpur" OR "IIT Roorkee" OR "IIT Guwahati" OR "BITS Pilani" OR "BITS Goa" OR "BITS Hyderabad" OR "NIT Trichy" OR "NIT Surathkal" OR "NIT Warangal" OR "NIT Calicut" OR "IIIT Hyderabad" OR "IIIT Bangalore" OR "IISc"' },
+  tier2: { label: 'Tier 2 — VIT / SRM / Manipal / PES / RV', colleges: '"VIT" OR "SRM" OR "Manipal" OR "PES University" OR "RV College" OR "BMS College" OR "PESIT" OR "Dayananda Sagar" OR "MS Ramaiah" OR "NMIMS" OR "Christ University" OR "Amrita" OR "Thapar" OR "SASTRA" OR "Symbiosis" OR "Sathyabama"' },
+  tier3: { label: 'Tier 3 — State / Affiliated Universities', colleges: '"Anna University" OR "JNTU" OR "Mumbai University" OR "Pune University" OR "VTU" OR "RTU" OR "GTU" OR "MDU" OR "AKTU" OR "RGPV" OR "GGSIPU" OR "Osmania University" OR "Bangalore University" OR "Andhra University"' },
+  custom: { label: '✏️ Add College / University manually', colleges: '' }
+};
+
+// Stream/Degree definitions
+const fresherStreams = {
+  btech_cs:  '"B.Tech" AND ("Computer Science" OR "CSE" OR "IT" OR "Information Technology")',
+  btech_ece: '"B.Tech" AND ("Electronics" OR "ECE" OR "EEE" OR "Electrical")',
+  btech_mech:'"B.Tech" AND ("Mechanical" OR "Mechatronics" OR "Production")',
+  btech_civil:'"B.Tech" AND ("Civil" OR "Structural" OR "Construction")',
+  mtech:     '"M.Tech" OR "ME" AND ("Computer Science" OR "ECE" OR "VLSI" OR "Embedded")',
+  mba:       '"MBA" AND ("Marketing" OR "Finance" OR "HR" OR "Operations" OR "Strategy")',
+  mca:       '"MCA" OR "M.Sc Computer Science" OR "M.Sc IT"',
+  bsc:       '"B.Sc" AND ("Computer Science" OR "IT" OR "Mathematics" OR "Statistics")',
+  any:       '"B.Tech" OR "B.E" OR "M.Tech" OR "MCA" OR "MBA" OR "B.Sc"'
+};
+
 const clusters = {
   faang:       '"Google" OR "Meta" OR "Amazon" OR "Apple" OR "Microsoft" OR "Netflix" OR "Adobe" OR "Salesforce" OR "Oracle" OR "IBM"',
   unicorns:    '"Flipkart" OR "Swiggy" OR "Zomato" OR "CRED" OR "Razorpay" OR "PhonePe" OR "Meesho" OR "Groww" OR "Zepto" OR "Dream11" OR "OLA" OR "Nykaa" OR "ShareChat" OR "Byju" OR "Unacademy" OR "Paytm" OR "PolicyBazaar" OR "Delhivery" OR "Ola Electric" OR "Slice"',
@@ -871,6 +1021,7 @@ function populateRoles() {
   else if (category === 'sales') roles = salesRoles;
   else if (category === 'veterans') roles = veteranRoles;
   else if (category === 'lgbtq') roles = lgbtqRoles;
+  else if (category === 'freshers') roles = fresherRoles;
 
   else if (category === 'custom') {
     getCustomRoles().forEach(r => { roles[r.key] = r; });
@@ -889,6 +1040,7 @@ function getRoleData(category, key) {
   if (category === 'sales') return salesRoles[key];
   if (category === 'veterans') return veteranRoles[key];
   if (category === 'lgbtq') return lgbtqRoles[key];
+  if (category === 'freshers') return fresherRoles[key];
   if (category === 'custom') return getCustomRoles().find(r => r.key === key);
   return null;
 }
@@ -1148,6 +1300,82 @@ const companyDB = {
 
 function detectRoleType(jdText) {
   const t = jdText.toLowerCase();
+
+  // ── Count keyword signals per role type ──
+  // This prevents a Full Stack JD from matching DevOps just because
+  // it mentions CI/CD once
+  const score = {
+    fullstack: 0, frontend: 0, backend: 0, devops: 0, sre: 0,
+    ml: 0, data: 0, mobile: 0, security: 0, cloud: 0, product: 0, sales: 0
+  };
+
+  // Full Stack signals
+  if (t.includes('full stack') || t.includes('fullstack') || t.includes('full-stack')) score.fullstack += 5;
+  if (t.includes('react') && (t.includes('node') || t.includes('java') || t.includes('python'))) score.fullstack += 3;
+  if (t.includes('frontend') && t.includes('backend')) score.fullstack += 4;
+
+  // Frontend signals
+  if (t.includes('frontend') || t.includes('front-end') || t.includes('ui developer')) score.frontend += 3;
+  if (t.includes('react') || t.includes('vue') || t.includes('angular')) score.frontend += 2;
+  if (t.includes('css') || t.includes('html') || t.includes('javascript')) score.frontend += 1;
+
+  // Backend signals
+  if (t.includes('backend') || t.includes('back-end') || t.includes('server side')) score.backend += 3;
+  if (t.includes('api') || t.includes('microservices') || t.includes('rest')) score.backend += 2;
+  if ((t.includes('java') || t.includes('python') || t.includes('golang') || t.includes('node')) && !t.includes('full stack')) score.backend += 1;
+
+  // DevOps signals
+  if (t.includes('devops')) score.devops += 5;
+  if (t.includes('terraform') || t.includes('ansible')) score.devops += 4;
+  if (t.includes('ci/cd') || t.includes('jenkins') || t.includes('pipeline')) score.devops += 3;
+  if (t.includes('docker') || t.includes('kubernetes')) score.devops += 2;
+
+  // SRE signals
+  if (t.includes('site reliability') || t.includes('sre')) score.sre += 5;
+  if (t.includes('on-call') || t.includes('observability') || t.includes('incident')) score.sre += 3;
+  if (t.includes('prometheus') || t.includes('grafana') || t.includes('datadog')) score.sre += 2;
+
+  // ML/AI signals
+  if (t.includes('machine learning') || t.includes('deep learning') || t.includes('llm')) score.ml += 5;
+  if (t.includes('nlp') || t.includes('ai/ml') || t.includes('data scientist')) score.ml += 3;
+  if (t.includes('tensorflow') || t.includes('pytorch') || t.includes('model training')) score.ml += 3;
+
+  // Data signals
+  if (t.includes('data engineer') || t.includes('data analyst')) score.data += 5;
+  if (t.includes('spark') || t.includes('hadoop') || t.includes('airflow') || t.includes('dbt')) score.data += 4;
+  if (t.includes('etl') || t.includes('data pipeline') || t.includes('data warehouse')) score.data += 3;
+
+  // Mobile signals
+  if (t.includes('android') || t.includes('ios') || t.includes('flutter') || t.includes('react native')) score.mobile += 5;
+  if (t.includes('swift') || t.includes('kotlin')) score.mobile += 4;
+
+  // Security signals
+  if (t.includes('security') || t.includes('cybersecurity') || t.includes('penetration')) score.security += 5;
+  if (t.includes('siem') || t.includes('soc') || t.includes('vapt')) score.security += 4;
+
+  // Cloud signals
+  if ((t.includes('cloud architect') || t.includes('cloud engineer')) && !t.includes('devops')) score.cloud += 5;
+  if (t.includes('aws') || t.includes('azure') || t.includes('gcp')) score.cloud += 2;
+
+  // Product signals
+  if (t.includes('product manager') || t.includes('product owner')) score.product += 5;
+  if (t.includes('roadmap') || t.includes('user story') || t.includes('sprint planning')) score.product += 3;
+
+  // Sales signals
+  if (t.includes('sales') || t.includes('account executive') || t.includes('business development')) score.sales += 5;
+
+  // Return highest scoring role
+  const winner = Object.entries(score).sort((a,b) => b[1]-a[1])[0];
+  if (winner[1] === 0) return 'default';
+
+  // Map role keys
+  const roleMap = { fullstack:'fullstack', frontend:'frontend', backend:'backend',
+    devops:'devops', sre:'sre', ml:'ml', data:'data', mobile:'mobile',
+    security:'security', cloud:'cloud', product:'product', sales:'sales' };
+
+  return roleMap[winner[0]] || 'default';
+
+  // Legacy fallback (not reached but kept for safety)
   if (t.includes('devops') || t.includes('ci/cd') || t.includes('terraform') || t.includes('ansible')) return 'devops';
   if (t.includes('site reliability') || t.includes('sre') || t.includes('on-call') || t.includes('observability')) return 'sre';
   if (t.includes('machine learning') || t.includes('deep learning') || t.includes('nlp') || t.includes('llm') || t.includes('ai/ml') || t.includes('data scientist')) return 'ml';
@@ -1541,6 +1769,215 @@ function openFromEl(id) {
   // ALL platforms open via Google so Chrome Extension can scrape them
   window.open('https://www.google.com/search?q=' + encodeURIComponent(q), '_blank');
 }
+
+
+// ══════════════════════════════════════════════════════════════
+// ROLE SEARCH WITH SPELL CORRECTION
+// ══════════════════════════════════════════════════════════════
+
+// Spell correction map — common typos → correct search terms
+const spellCorrections = {
+  'vetran': 'veteran', 'veteren': 'veteran', 'veterean': 'veteran',
+  'vetern': 'veteran', 'veterin': 'veteran', 'vetaran': 'veteran',
+  'fullstacker': 'full stack', 'fullstack': 'full stack', 'full-stack': 'full stack',
+  'fronend': 'frontend', 'forntend': 'frontend', 'frontent': 'frontend',
+  'backand': 'backend', 'beckend': 'backend', 'bakend': 'backend',
+  'devop': 'devops', 'devpos': 'devops', 'devops engineer': 'devops',
+  'sreq': 'sre', 'site relaibility': 'site reliability',
+  'databse': 'database', 'datascience': 'data science',
+  'machin learning': 'machine learning', 'machinelearning': 'machine learning',
+  'tire1': 'tier 1', 'tire2': 'tier 2', 'teir1': 'tier 1', 'teir2': 'tier 2',
+  'tier1': 'tier 1', 'tier2': 'tier 2',
+  'freser': 'fresher', 'fresher': 'fresher', 'frseher': 'fresher',
+  'andriod': 'android', 'androud': 'android',
+  'securty': 'security', 'securtiy': 'security',
+  'prodcut': 'product', 'prouct': 'product',
+  'entereprise': 'enterprise', 'enterprice': 'enterprise',
+};
+
+// Build a flat list of all roles for search
+function getAllRoles() {
+  const allRoles = [];
+  const roleSets = [
+    { key: 'tech', obj: typeof techRoles !== 'undefined' ? techRoles : {} },
+    { key: 'sales', obj: typeof salesRoles !== 'undefined' ? salesRoles : {} },
+    { key: 'veterans', obj: typeof veteranRoles !== 'undefined' ? veteranRoles : {} },
+    { key: 'freshers', obj: typeof fresherRoles !== 'undefined' ? fresherRoles : {} },
+  ];
+  roleSets.forEach(set => {
+    Object.entries(set.obj).forEach(([roleKey, roleData]) => {
+      allRoles.push({
+        category: set.key,
+        key: roleKey,
+        label: roleData.label || roleKey,
+      });
+    });
+  });
+  return allRoles;
+}
+
+function correctSpelling(input) {
+  const lower = input.toLowerCase().trim();
+  return spellCorrections[lower] || lower;
+}
+
+function filterRoles(input) {
+  const corrected = correctSpelling(input);
+  const suggestions = document.getElementById('role-suggestions');
+  if (!input.trim()) { suggestions.style.display = 'none'; return; }
+
+  const allRoles = getAllRoles();
+  const matches = allRoles.filter(r =>
+    r.label.toLowerCase().includes(corrected) ||
+    r.key.toLowerCase().includes(corrected) ||
+    r.category.toLowerCase().includes(corrected)
+  );
+
+  if (!matches.length) {
+    suggestions.innerHTML = '<div style="padding:10px 14px;font-size:11px;color:var(--muted);">No roles found — try a different spelling</div>';
+    suggestions.style.display = 'block';
+    return;
+  }
+
+  suggestions.innerHTML = matches.slice(0, 10).map(m => `
+    <div onclick="selectRoleFromSearch('${m.category}', '${m.key}', '${m.label.replace(/'/g, "\'")}')"
+      style="padding:9px 14px;cursor:pointer;font-size:12px;color:var(--text);
+      border-bottom:1px solid var(--border);transition:background 0.15s;"
+      onmouseover="this.style.background='var(--surface2)'"
+      onmouseout="this.style.background='transparent'">
+      <span style="color:var(--accent);font-size:10px;text-transform:uppercase;
+        letter-spacing:1px;margin-right:8px;">${m.category}</span>
+      ${m.label}
+    </div>
+  `).join('');
+  suggestions.style.display = 'block';
+
+  // Show spell correction hint if input was corrected
+  if (corrected !== input.toLowerCase().trim()) {
+    const hint = document.createElement('div');
+    hint.style.cssText = 'padding:6px 14px;font-size:10px;color:var(--warn);border-top:1px solid var(--border);';
+    hint.innerHTML = `✏️ Showing results for "<strong>${corrected}</strong>"`;
+    suggestions.appendChild(hint);
+  }
+}
+
+function selectRoleFromSearch(category, roleKey, label) {
+  // Set category
+  document.getElementById('category').value = category;
+  populateRoles();
+
+  // Set role
+  document.getElementById('role').value = roleKey;
+
+  // Update search box
+  document.getElementById('role-search').value = label;
+
+  // Hide suggestions
+  document.getElementById('role-suggestions').style.display = 'none';
+
+  // Update tag preview if exists
+  if (typeof updateTagPreview === 'function') updateTagPreview();
+}
+
+function showRoleDropdown() {
+  const val = document.getElementById('role-search').value;
+  if (val.trim()) filterRoles(val);
+}
+
+// Close suggestions when clicking outside
+document.addEventListener('click', function(e) {
+  const suggestions = document.getElementById('role-suggestions');
+  const searchBox   = document.getElementById('role-search');
+  if (suggestions && !suggestions.contains(e.target) && e.target !== searchBox) {
+    suggestions.style.display = 'none';
+  }
+});
+
+
+// ══════════════════════════════════════════════════════════════
+// FRESHER DYNAMIC QUERY BUILDER
+// ══════════════════════════════════════════════════════════════
+
+function onFresherTierChange() {
+  const tier = document.getElementById('fresher-tier').value;
+  const customWrap = document.getElementById('fresher-custom-college-wrap');
+  customWrap.style.display = tier === 'custom' ? 'block' : 'none';
+  buildFresherQuery();
+}
+
+function showFresherPanel(show) {
+  const panel = document.getElementById('fresher-panel');
+  if (panel) panel.style.display = show ? 'block' : 'none';
+  if (show) buildFresherQuery();
+}
+
+function buildFresherQuery() {
+  const year     = document.getElementById('fresher-year')?.value || '';
+  const tier     = document.getElementById('fresher-tier')?.value || '';
+  const stream   = document.getElementById('fresher-stream')?.value || 'any';
+  const location = document.getElementById('fresher-location')?.value || 'india';
+  const custom   = document.getElementById('fresher-custom-college')?.value?.trim() || '';
+
+  if (!year && !tier) {
+    document.getElementById('fresher-preview').style.display = 'none';
+    return;
+  }
+
+  // Build college string
+  let collegeStr = '';
+  if (tier === 'custom' && custom) {
+    const colleges = custom.split(',').map(c => c.trim()).filter(Boolean);
+    collegeStr = colleges.map(c => `"${c}"`).join(' OR ');
+  } else if (tier && collegeTiers[tier]) {
+    collegeStr = collegeTiers[tier].colleges;
+  }
+
+  // Build stream string
+  const streamStr = fresherStreams[stream] || fresherStreams['any'];
+
+  // Build year string
+  const yearStr = year ? `"${year}"` : '';
+
+  // Build location string
+  const locMap = {
+    india: '"India" OR "Bangalore" OR "Mumbai" OR "Delhi" OR "Hyderabad" OR "Pune" OR "Chennai"',
+    bangalore: '"Bangalore" OR "Bengaluru"',
+    mumbai: '"Mumbai" OR "Navi Mumbai" OR "Thane"',
+    delhi: '"Delhi" OR "Gurgaon" OR "Noida" OR "Gurugram"',
+    hyderabad: '"Hyderabad" OR "Secunderabad"',
+    pune: '"Pune"',
+    chennai: '"Chennai"'
+  };
+  const locStr = locMap[location] || locMap['india'];
+
+  // Build final query
+  let parts = [];
+  if (collegeStr) parts.push(`(${collegeStr})`);
+  if (yearStr)    parts.push(yearStr);
+  if (streamStr)  parts.push(`(${streamStr})`);
+
+  const query = parts.join(' AND ');
+  const xray  = `site:linkedin.com/in ${query} AND (${locStr})`;
+
+  // Show preview
+  const preview = document.getElementById('fresher-preview');
+  preview.textContent = xray;
+  preview.style.display = 'block';
+
+  // Push to output fields
+  document.getElementById('output').value = query + ` AND (${locStr})`;
+  document.getElementById('xray').value   = xray;
+  document.getElementById('so-query').value = '';
+  document.getElementById('gh-query').value = '';
+}
+
+// Show/hide fresher panel based on category selection
+const _origPopulateRoles = populateRoles;
+populateRoles = function() {
+  _origPopulateRoles();
+  const cat = document.getElementById('category').value;
+  showFresherPanel(cat === 'freshers');
+};
 
 </script>
 </body>
