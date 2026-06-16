@@ -1008,12 +1008,22 @@ function generate() {
     const nameBatch2 = 'Riya OR Sonal OR Tanvi OR Akanksha OR Rhea OR Avni OR Anika OR Trisha OR Khushi OR Isha OR Ruchi OR Pallavi OR Sanya OR Nikita OR Preeti OR Arushi OR Srishti OR Devanshi OR Navya OR Sanvi OR Bhavna OR Lavanya OR Aarohi OR Aayushi OR Nidhi';
     const nameBatch3 = 'Aarti OR Aasha OR Aishwarya OR Akansha OR Akshara OR Alisha OR Amisha OR Amrita OR Anushka OR Aparna OR Aruna OR Asha OR Asmita OR Aswini OR Athira OR Avanti OR Ayesha OR Bhavika OR Chetna OR Damini OR Deepali OR Deepti OR Disha OR Ekta OR Falak';
 
-    // Main X-Ray — batch 1 with role + India
-    const femaleXray = `site:linkedin.com/in (${nameBatch1}) (${topTitles || topSkills}) (${topSkills}) (${indiaLoc})`;
+    // KEY FIX: Use inurl: so the name MUST appear in the LinkedIn profile URL
+    // LinkedIn URLs are: linkedin.com/in/priya-sharma-123 — name is always in URL
+    // This prevents male profiles slipping through via skill keyword matches
 
-    // Alternative searches shown in output for recruiter to run manually
-    const femaleXray2 = `site:linkedin.com/in (${nameBatch2}) (${topTitles || topSkills}) (${topSkills}) (${indiaLoc})`;
-    const femaleXray3 = `site:linkedin.com/in (${nameBatch3}) (${topTitles || topSkills}) (${topSkills}) (${indiaLoc})`;
+    // Build inurl name strings — each name as separate inurl: condition
+    const batch1Names = ['aditi','anjali','priya','sneha','pooja','deepika','neha','shreya','divya','kavya','nisha','ritika','ankita','meghna','simran','sakshi','ananya','tanya','shruti','swati'];
+    const batch2Names = ['riya','sonal','tanvi','akanksha','rhea','avni','anika','trisha','khushi','isha','ruchi','pallavi','sanya','nikita','preeti','arushi','navya','sanvi','bhavna','lavanya'];
+    const batch3Names = ['aarti','aishwarya','akansha','amisha','amrita','anushka','aparna','asha','asmita','disha','ekta','falak','gauri','geetanjali','hema','isha','jyoti','kajal','kalpana','kavita'];
+
+    const inurlBatch1 = batch1Names.map(n => `inurl:${n}`).join(' OR ');
+    const inurlBatch2 = batch2Names.map(n => `inurl:${n}`).join(' OR ');
+    const inurlBatch3 = batch3Names.map(n => `inurl:${n}`).join(' OR ');
+
+    const femaleXray  = `site:linkedin.com/in (${inurlBatch1}) (${topTitles || topSkills}) (${indiaLoc})`;
+    const femaleXray2 = `site:linkedin.com/in (${inurlBatch2}) (${topTitles || topSkills}) (${indiaLoc})`;
+    const femaleXray3 = `site:linkedin.com/in (${inurlBatch3}) (${topTitles || topSkills}) (${indiaLoc})`;
 
     // Full boolean for copy
     const femaleBoolean = `(${femaleNamesBoolean}) AND (${rd.titles}) AND (${rd.skills}) AND (${indiaLoc})`;
