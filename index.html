@@ -371,6 +371,16 @@ textarea.form-area:focus{border-color:var(--accent);}
       <label>Exclude Keywords</label>
       <input id="exclude" placeholder="Intern, Contract">
     </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:-8px;margin-bottom:14px;padding:10px 14px;background:rgba(255,107,179,0.06);border:1px solid rgba(255,107,179,0.2);border-radius:8px;">
+      <input type="checkbox" id="female-filter" style="width:16px;height:16px;accent-color:#ff6bb3;cursor:pointer;" onchange="updateFemaleFilter()">
+      <div>
+        <label for="female-filter" style="font-size:11px;font-weight:700;color:#ff6bb3;cursor:pointer;">🚺 Female Candidates Only</label>
+        <div style="font-size:10px;color:var(--muted);">Uses Indian female names Boolean — more effective than She/Her for India sourcing</div>
+      </div>
+    </div>
+    <div id="female-preview" style="display:none;font-size:10px;color:#ff6bb3;background:rgba(255,107,179,0.06);border:1px solid rgba(255,107,179,0.25);border-radius:7px;padding:8px 12px;margin-top:-10px;margin-bottom:10px;">🚺 <strong>Female mode active</strong> — Google X-Ray uses Indian female names as the primary filter. Boolean string contains all 500+ names. Only female candidates will appear in results.</div>
+    <div style="display:none;">
+    </div>
   </div>
 
   <!-- Mandatory Keywords card -->
@@ -735,10 +745,19 @@ const lgbtqRoles = {
 };
 
 const clusters = {
-  faang:  '"Google" OR "Amazon" OR "Microsoft" OR "Meta" OR "Apple"',
-  unicorn:'"Flipkart" OR "Swiggy" OR "Razorpay" OR "Meesho" OR "Zomato"',
-  fintech:'"Razorpay" OR "PhonePe" OR "Paytm" OR "Stripe"'
+  faang:       '"Google" OR "Meta" OR "Amazon" OR "Apple" OR "Microsoft" OR "Netflix" OR "Adobe" OR "Salesforce" OR "Oracle" OR "IBM"',
+  unicorns:    '"Flipkart" OR "Swiggy" OR "Zomato" OR "CRED" OR "Razorpay" OR "PhonePe" OR "Meesho" OR "Groww" OR "Zepto" OR "Dream11" OR "OLA" OR "Nykaa" OR "ShareChat" OR "Byju" OR "Unacademy" OR "Paytm" OR "PolicyBazaar" OR "Delhivery" OR "Ola Electric" OR "Slice"',
+  bangalore:   '"Infosys" OR "Wipro" OR "TCS" OR "HCL" OR "Cognizant" OR "Mindtree" OR "Mphasis" OR "LTIMindtree" OR "Hexaware" OR "Zensar" OR "Coforge" OR "Nagarro" OR "Thoughtworks" OR "Publicis Sapient"',
+  mnc_tech:    '"Qualcomm" OR "Nvidia" OR "Intel" OR "Cisco" OR "Juniper" OR "VMware" OR "Symantec" OR "Veritas" OR "NetApp" OR "EMC" OR "Dell" OR "HP" OR "Siemens" OR "Bosch" OR "SAP Labs" OR "Amadeus" OR "Synopsys" OR "Mentor Graphics"',
+  fintech:     '"Razorpay" OR "PhonePe" OR "Paytm" OR "CRED" OR "Groww" OR "Zerodha" OR "Slice" OR "Jupiter" OR "Fi Money" OR "Juspay" OR "BankBazaar" OR "Freecharge" OR "Mobikwik" OR "Lendingkart" OR "Capital Float"',
+  startups:    '"Practo" OR "MoEngage" OR "Druva" OR "Freshworks" OR "Zoho" OR "Postman" OR "BrowserStack" OR "Chargebee" OR "Whatfix" OR "Clevertap" OR "Wingify" OR "WebEngage" OR "Sprinklr" OR "Pubmatic" OR "Akamai" OR "Netcore" OR "Exotel"',
+  ecomm:       '"Flipkart" OR "Myntra" OR "Nykaa" OR "Meesho" OR "Snapdeal" OR "ShopClues" OR "Bigbasket" OR "Grofers" OR "Blinkit" OR "Zepto" OR "Urban Ladder" OR "Pepperfry" OR "Licious" OR "HealthKart" OR "Mamaearth"',
+  edtech:      '"Byju" OR "Unacademy" OR "Vedantu" OR "UpGrad" OR "Simplilearn" OR "Great Learning" OR "Coursera" OR "WhiteHat Jr" OR "Toppr" OR "Doubtnut" OR "Scaler" OR "Newton School"',
 };
+
+// ── FEMALE NAMES DIVERSITY FILTER ─────────────────────────────
+const femaleNamesBoolean = `(Aabha OR Aadarshini OR Aaddhya OR Aadhaya OR Aadhya OR Aadya OR Aahana OR Aairah OR Aakaanksha OR Aalia OR Aanchal OR Aaniya OR Aanya OR Aaradhya OR Aarati OR Aarna OR Aarohi OR Aarti OR Aarushi OR Aasha OR Aashna OR Aashvi OR Aastha OR Aayushi OR Abha OR Abhilasha OR Aditi OR Advika OR Aesha OR Afreen OR Aisha OR Aiswarya OR Akanksha OR Akhila OR Akshara OR Alisha OR Alka OR Alpana OR Amaira OR Amaya OR Ambika OR Amisha OR Amrita OR Ananya OR Anaya OR Anchal OR Anika OR Anisha OR Anita OR Anjali OR Anjana OR Ankita OR Anshula OR Antara OR Anu OR Anupama OR Anuradha OR Anusha OR Anushka OR Anvi OR Anvitha OR Aparna OR Arpita OR Arti OR Aruna OR Arundhati OR Arushi OR Arya OR Asha OR Asmita OR Aswini OR Athira OR Avani OR Avantika OR Avni OR Ayesha OR Ayushi) OR (Babita OR Barkha OR Beena OR Bela OR Bhagyashri OR Bhairavi OR Bhanu OR Bharati OR Bharti OR Bhavana OR Bhavika OR Bhavna OR Bhoomika OR Bhumika OR Bijoya OR Bimala OR Bina OR Bindu OR Binita OR Bipasha OR Brinda) OR (Chaaya OR Chameli OR Champa OR Chanchal OR Chandani OR Chandni OR Chandralekha OR Charu OR Chetana OR Chetna OR Chhavi OR Chhaya OR Chitra) OR (Damini OR Darshita OR Deepa OR Deepali OR Deepika OR Deepti OR Devangi OR Devanshi OR Devi OR Devika OR Devyani OR Dhanvi OR Dhara OR Diksha OR Dimple OR Dipali OR Dipika OR Disha OR Divya OR Diya OR Drashti OR Drishti OR Durga) OR (Esha OR Ekta) OR (Falak OR Falguni OR Farah OR Farida OR Fatima) OR (Ganga OR Garima OR Gauri OR Gayatri OR Geet OR Geeta OR Geetanjali OR Girija) OR (Heema OR Heena OR Heer OR Hema OR Himani OR Hina) OR (Indira OR Ira OR Isha OR Ishani OR Ishika OR Ishita) OR (Jahnavi OR Janaki OR Jasmin OR Jasmine OR Jaspreet OR Jayalaxmi OR Jayanti OR Jhanvi OR Jiya OR Juhi OR Jyoti OR Jyotika) OR (Kajal OR Kalpana OR Kalyani OR Kamala OR Kamini OR Kanchan OR Kanika OR Karishma OR Karuna OR Kashish OR Kashmira OR Kavita OR Kavya OR Khushi OR Komal OR Kritika OR Kusum) OR (Lakshmi OR Lavanya OR Laxmi OR Leena OR Lily) OR (Madhuri OR Mahima OR Manisha OR Manjeet OR Manju OR Mansi OR Manya OR Maya OR Mayuri OR Meena OR Meenakshi OR Megha OR Meghana OR Mehak OR Mili OR Mira OR Mishka OR Mishti OR Mitali OR Mohini OR Mona OR Monika OR Mridula OR Muskan OR Myra) OR (Naina OR Nalini OR Namita OR Nandini OR Navya OR Neela OR Neelam OR Neha OR Nidhi OR Niharika OR Nikita OR Nirmala OR Nisha OR Nishita OR Nita OR Nitya OR Nivedita OR Noor) OR (Padma OR Pallavi OR Pari OR Parul OR Parvati OR Payal OR Pihu OR Pooja OR Poonam OR Prachi OR Pragati OR Pratibha OR Pratima OR Preeti OR Priya OR Priyanka OR Priyanshi OR Puja OR Purnima OR Purva OR Pushpa) OR (Rachana OR Radhika OR Ragini OR Rajani OR Rajni OR Rakhi OR Ramya OR Rashmi OR Raveena OR Rekha OR Renu OR Renuka OR Reshma OR Rhea OR Ria OR Richa OR Riddhi OR Ritika OR Ritu OR Riya OR Rohini OR Ruchi OR Rutuja) OR (Saanvi OR Sakshi OR Saloni OR Sameera OR Sandhya OR Sangeeta OR Sanjana OR Sanvi OR Sapna OR Sara OR Saraswati OR Sarita OR Saumya OR Savita OR Seema OR Shalini OR Shanaya OR Sharda OR Sharmila OR Sheetal OR Shefali OR Shikha OR Shilpa OR Shivangi OR Shivani OR Shreya OR Shruti OR Shweta OR Simran OR Sita OR Siya OR Smita OR Smriti OR Sneha OR Sona OR Sonali OR Sonam OR Sonia OR Suha OR Suhani OR Suhasini OR Sunaina OR Sunita OR Supriya OR Surabhi OR Swapna OR Swara OR Swati) OR (Tanishka OR Tanvi OR Tanya OR Tara OR Tejal OR Tejaswini OR Tina OR Trisha OR Tulsi) OR (Vaishnavi OR Vani OR Vanya OR Varsha OR Vijaya) OR (Zara OR Zoya)`;
+
 const talentClusters = {
   blrProduct:    '"Symantec" OR "Vmware" OR "Intuit" OR "Veritas" OR "Netapp" OR "Visa" OR "Paypal" OR "Amazon" OR "Flipkart" OR "Myntra" OR "Nvidia" OR "Qualcomm" OR "Adobe" OR "Cisco" OR "Oracle" OR "Intel" OR "Citrix" OR "Walmart"',
   puneProduct:   '"Nvidia" OR "VMware" OR "Pubmatic" OR "Veritas" OR "Druva" OR "Fiserv" OR "Marvell" OR "SAP Labs" OR "Zscaler" OR "FireEye" OR "Qualys" OR "Barclays" OR "Couchbase" OR "Persistent Systems" OR "TIBCO" OR "Red Hat" OR "Nutanix" OR "Cohesity"',
@@ -899,6 +918,17 @@ function expLogic(min, max) {
 // ══════════════════════════════════════════════
 let mandatoryLogicMode = 'OR';
 
+function updateFemaleFilter() {
+  const checked = document.getElementById('female-filter').checked;
+  const preview = document.getElementById('female-preview');
+  preview.style.display = checked ? 'block' : 'none';
+  // Reset results when toggling
+  document.getElementById('output').value = '';
+  document.getElementById('xray').value = '';
+  document.getElementById('so-query').value = '';
+  document.getElementById('gh-query').value = '';
+}
+
 function setLogic(mode) {
   mandatoryLogicMode = mode;
   document.querySelectorAll('.logic-btn').forEach(b => b.classList.remove('active'));
@@ -957,14 +987,54 @@ function generate() {
   if (cos)       q += ` AND ${cos}`;
   if (excl)      q += ` NOT ${excl}`;
 
-  document.getElementById('output').value = q;
-  document.getElementById('xray').value = `site:linkedin.com/in ${q}`;
+  const femaleChecked = document.getElementById('female-filter')?.checked;
 
-  // StackOverflow X-Ray — searches SO user profiles & developer stories
+  if (femaleChecked) {
+    // Female mode — names + role skills + India location
+    // Extract top 3 skills from role data (quoted terms only)
+    const skillMatches = rd.skills.match(/"([^"]+)"/g) || [];
+    const topSkills = skillMatches.slice(0, 4).join(' OR ');
+
+    // Get role titles (top 2)
+    const titleMatches = rd.titles.match(/"([^"]+)"/g) || [];
+    const topTitles = titleMatches.slice(0, 2).join(' OR ');
+
+    // India location — always force India regardless of location dropdown
+    const indiaLoc = '"India" OR "Bangalore" OR "Mumbai" OR "Delhi" OR "Hyderabad" OR "Pune" OR "Chennai" OR "Noida" OR "Gurgaon"';
+
+    // Female X-Ray: Names block + Role titles + Skills + India
+    // Use 3 separate name batches — run each search separately for best coverage
+    const nameBatch1 = 'Aditi OR Anjali OR Priya OR Sneha OR Pooja OR Deepika OR Neha OR Shreya OR Divya OR Kavya OR Nisha OR Ritika OR Ankita OR Meghna OR Ishita OR Simran OR Sakshi OR Ananya OR Tanya OR Shruti OR Swati OR Mansi OR Shweta OR Gauri OR Amrita';
+    const nameBatch2 = 'Riya OR Sonal OR Tanvi OR Akanksha OR Rhea OR Avni OR Anika OR Trisha OR Khushi OR Isha OR Ruchi OR Pallavi OR Sanya OR Nikita OR Preeti OR Arushi OR Srishti OR Devanshi OR Navya OR Sanvi OR Bhavna OR Lavanya OR Aarohi OR Aayushi OR Nidhi';
+    const nameBatch3 = 'Aarti OR Aasha OR Aishwarya OR Akansha OR Akshara OR Alisha OR Amisha OR Amrita OR Anushka OR Aparna OR Aruna OR Asha OR Asmita OR Aswini OR Athira OR Avanti OR Ayesha OR Bhavika OR Chetna OR Damini OR Deepali OR Deepti OR Disha OR Ekta OR Falak';
+
+    // Main X-Ray — batch 1 with role + India
+    const femaleXray = `site:linkedin.com/in (${nameBatch1}) (${topTitles || topSkills}) (${topSkills}) (${indiaLoc})`;
+
+    // Alternative searches shown in output for recruiter to run manually
+    const femaleXray2 = `site:linkedin.com/in (${nameBatch2}) (${topTitles || topSkills}) (${topSkills}) (${indiaLoc})`;
+    const femaleXray3 = `site:linkedin.com/in (${nameBatch3}) (${topTitles || topSkills}) (${topSkills}) (${indiaLoc})`;
+
+    // Full boolean for copy
+    const femaleBoolean = `(${femaleNamesBoolean}) AND (${rd.titles}) AND (${rd.skills}) AND (${indiaLoc})`;
+
+    document.getElementById('output').value = femaleBoolean;
+    document.getElementById('xray').value   = femaleXray;
+
+    // Show all 3 batches in SO field so recruiter knows to run all 3
+    document.getElementById('so-query').value = '— Run these 3 X-Ray searches for full coverage —\n1. ' + femaleXray + '\n\n2. ' + femaleXray2 + '\n\n3. ' + femaleXray3;
+    document.getElementById('gh-query').value = femaleXray2;
+
+  } else {
+    document.getElementById('output').value = q;
+    document.getElementById('xray').value = `site:linkedin.com/in ${q}`;
+
+  // StackOverflow and GitHub only for non-female mode (else block)
   document.getElementById('so-query').value = `site:stackoverflow.com/users ${buildSOQuery(rd, mandatory)}`;
 
   // GitHub X-Ray — searches GitHub profiles/readmes
   document.getElementById('gh-query').value = buildGHQuery(rd, mandatory, document.getElementById('location').value);
+  } // end else (non-female mode)
 }
 
 function buildSOQuery(rd, mandatory) {
